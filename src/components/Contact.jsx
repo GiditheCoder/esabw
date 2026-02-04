@@ -1,4 +1,4 @@
-import React , {useState}from "react";
+import React, { useState } from "react";
 import boxappointment from "../images/boxappoint.png";
 import { useNavigate } from "react-router-dom";
 import sparkle from "../images/sparkle.png";
@@ -8,12 +8,49 @@ import { motion, AnimatePresence } from "framer-motion";
 import MapIcon from "../images/mapicon.png";
 import Menu from "../images/menu.png";
 import Close from "../images/CloseIcon.png";
-
+import { useCreateMessage } from "../hooks/server/mutations";
 
 const Contact = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const {
+    mutateAsync: createMessage,
+    isPending,
+    isError,
+    error,
+  } = useCreateMessage({
+    onSuccess: () => {
+      setSuccessModal(true);
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+    },
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await createMessage(formData);
+    } catch {
+      // Error state is handled by react-query
+    }
+  };
   return (
     <div className="w-full">
       {/* ================= HERO SECTION ================= */}
@@ -30,7 +67,7 @@ const Contact = () => {
           backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url(${boxappointment})`,
         }}
       >
-           {/* <nav className="flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-9 py-5">
+        {/* <nav className="flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-9 py-5">
           <div className="text-sm font-semibold">Brand Logo</div>
 
         <ul className="flex gap-6 text-sm text-white">
@@ -53,72 +90,69 @@ const Contact = () => {
 </ul>
         </nav> */}
 
-          <nav className="relative flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-6 py-4">
-                  <div className="text-sm font-semibold">Brand Logo</div>
-        
-                  {/* Desktop Menu */}
-                  <ul className="hidden md:flex gap-6 text-sm text-white">
-                    <li
-                      onClick={() => navigate("/")}
-                      className="cursor-pointer font-medium hover:text-[#0093FF] transition"
-                    >
-                      Home
-                    </li>
-                    <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
-                      Services
-                    </li>
-                    <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
-                      About us
-                    </li>
-                    <li
-                      onClick={() => navigate("/contact")}
-                      className="cursor-pointer opacity-90 hover:text-[#0093FF] transition"
-                    >
-                      Contact
-                    </li>
-                  </ul>
-        
-                  {/* Mobile Menu Icon */}
-                  <img
-                    src={menuOpen ? Close : Menu}
-                    alt="menu"
-                    className="w-6 h-6 cursor-pointer md:hidden"
-                    onClick={() => setMenuOpen(!menuOpen)}
-                  />
-        
-                  {/* Mobile Dropdown */}
-                  {menuOpen && (
-                    <div className="absolute top-full left-0 mt-4 w-full rounded-xl bg-black/90 backdrop-blur-md md:hidden">
-                      <ul className="flex flex-col items-center gap-6 py-6 text-sm">
-                        <li onClick={() => navigate("/")} className="cursor-pointer">
-                          Home
-                        </li>
-                        <li className="cursor-pointer">Services</li>
-                        <li className="cursor-pointer">About us</li>
-                        <li
-                          onClick={() => navigate("/contact")}
-                          className="cursor-pointer"
-                        >
-                          Contact
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </nav>
+        <nav className="relative flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-6 py-4">
+          <div className="text-sm font-semibold">Brand Logo</div>
 
+          {/* Desktop Menu */}
+          <ul className="hidden md:flex gap-6 text-sm text-white">
+            <li
+              onClick={() => navigate("/")}
+              className="cursor-pointer font-medium hover:text-[#0093FF] transition"
+            >
+              Home
+            </li>
+            <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
+              Services
+            </li>
+            <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
+              About us
+            </li>
+            <li
+              onClick={() => navigate("/contact")}
+              className="cursor-pointer opacity-90 hover:text-[#0093FF] transition"
+            >
+              Contact
+            </li>
+          </ul>
 
+          {/* Mobile Menu Icon */}
+          <img
+            src={menuOpen ? Close : Menu}
+            alt="menu"
+            className="w-6 h-6 cursor-pointer md:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+          />
+
+          {/* Mobile Dropdown */}
+          {menuOpen && (
+            <div className="absolute top-full left-0 mt-4 w-full rounded-xl bg-black/90 backdrop-blur-md md:hidden">
+              <ul className="flex flex-col items-center gap-6 py-6 text-sm">
+                <li onClick={() => navigate("/")} className="cursor-pointer">
+                  Home
+                </li>
+                <li className="cursor-pointer">Services</li>
+                <li className="cursor-pointer">About us</li>
+                <li
+                  onClick={() => navigate("/contact")}
+                  className="cursor-pointer"
+                >
+                  Contact
+                </li>
+              </ul>
+            </div>
+          )}
+        </nav>
 
         <div className="flex min-h-[55vh] items-center justify-center text-center">
-        <div className="max-w-3xl">
-  <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl">
-    Contact Us
-  </h1>
+          <div className="max-w-3xl">
+            <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl">
+              Contact Us
+            </h1>
 
-  <p className="mt-4 text-xs sm:text-sm opacity-90">
-    Have a question or need assistance? We’re here to help.
-  </p>
-</div>
-
+            <p className="mt-4 text-xs sm:text-sm opacity-90">
+              Have a question or need assistance? We’re here to help.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -131,52 +165,76 @@ const Contact = () => {
             Fill out the form below and we will get back to you shortly.
           </p>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="text-sm font-medium">Full Name <span className="text-red-500"> *</span></label>
+              <label className="text-sm font-medium">
+                Full Name <span className="text-red-500"> *</span>
+              </label>
               <input
                 type="text"
                 placeholder="John Doe"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
                 className="w-full mt-1 rounded-md bg-[#EDF0F3] border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium">Email Address <span className="text-red-500"> *</span></label>
+              <label className="text-sm font-medium">
+                Email Address <span className="text-red-500"> *</span>
+              </label>
               <input
                 type="email"
                 placeholder="johndoe@example.com"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="w-full mt-1 rounded-md bg-[#EDF0F3] border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium">Phone Number <span className="text-red-500"> *</span></label>
+              <label className="text-sm font-medium">
+                Phone Number <span className="text-red-500"> *</span>
+              </label>
               <input
                 type="tel"
                 placeholder="+234 123 456 7890"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
                 className="w-full mt-1 rounded-md  bg-[#EDF0F3] border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium">Message <span className="text-red-500"> *</span></label>
+              <label className="text-sm font-medium">
+                Message <span className="text-red-500"> *</span>
+              </label>
               <textarea
                 rows="4"
                 placeholder="Type message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
                 className="w-full mt-1 rounded-md bg-[#EDF0F3] border border-gray-300 px-4 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-400"
               ></textarea>
             </div>
 
             <button
-            onClick={()=>{
-    setSuccessModal(true);
-            } }
               type="submit"
-              className="w-full bg-[#041725] text-white py-3 rounded-md text-sm font-medium hover:bg-slate-800 transition"
+              disabled={isPending}
+              className="w-full bg-[#041725] text-white py-3 rounded-md text-sm font-medium hover:bg-slate-800 transition disabled:opacity-60"
             >
-              Send Message
+              {isPending ? "Sending..." : "Send Message"}
             </button>
+
+            {isError && (
+              <p className="text-sm text-red-600">
+                {error?.message || "Failed to send. Please try again."}
+              </p>
+            )}
           </form>
         </div>
 
@@ -215,48 +273,55 @@ const Contact = () => {
         </div>
       </div>
 
-        <AnimatePresence>
-              {successModal && (
-                <motion.div
-                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+      <AnimatePresence>
+        {successModal && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-2xl"
+              initial={{ scale: 0.9, opacity: 0, y: 40 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 40 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex justify-between mb-6">
+                <button
+                  onClick={() => navigate("/")}
+                  className="text-sm text-gray-500"
                 >
-                  <motion.div
-                    className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-2xl"
-                    initial={{ scale: 0.9, opacity: 0, y: 40 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.9, opacity: 0, y: 40 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="flex justify-between mb-6">
-                      <button onClick={() => navigate("/")} className="text-sm text-gray-500">
-                        <img src={BackwardIcon} alt="back" className="inline h-4 w-4 mr-1" />
-                        Back Home
-                      </button>
-      
-                      <button onClick={() => setSuccessModal(false)}>
-                        <img src={CloseIcon} alt="close" className="h-4 w-4" />
-                      </button>
-                    </div>
-      
-                    <motion.img
-                      src={sparkle}
-                      className="mx-auto mb-6 h-20 w-20"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 200 }}
-                    />
-      
-                    <h2 className="text-xl font-bold mb-2">Form Submitted!</h2>
-                    <p className="text-sm text-gray-500">
-                      Thank you! We will get back to you shortly.
-                    </p>
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <img
+                    src={BackwardIcon}
+                    alt="back"
+                    className="inline h-4 w-4 mr-1"
+                  />
+                  Back Home
+                </button>
+
+                <button onClick={() => setSuccessModal(false)}>
+                  <img src={CloseIcon} alt="close" className="h-4 w-4" />
+                </button>
+              </div>
+
+              <motion.img
+                src={sparkle}
+                className="mx-auto mb-6 h-20 w-20"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              />
+
+              <h2 className="text-xl font-bold mb-2">Form Submitted!</h2>
+              <p className="text-sm text-gray-500">
+                Thank you! We will get back to you shortly.
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

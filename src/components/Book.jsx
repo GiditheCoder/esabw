@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import boxappointment from "../images/boxappoint.png";
 import { useNavigate } from "react-router-dom";
 import sparkle from "../images/sparkle.png";
@@ -7,20 +7,61 @@ import CloseIcon from "../images/CloseIcon.png";
 import { motion, AnimatePresence } from "framer-motion";
 import Menu from "../images/menu.png";
 import Close from "../images/CloseIcon.png";
-
-
-
+import { useCreateAppointment } from "../hooks/server/mutations";
 
 const Book = () => {
   const navigate = useNavigate();
-    const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
+  const [formData, setFormData] = useState({
+    serviceType: "",
+    serviceDescription: "",
+    applianceType: "",
+    appointmentDate: "",
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
 
+  const {
+    mutateAsync: createAppointment,
+    isPending,
+    isError,
+    error,
+  } = useCreateAppointment({
+    onSuccess: () => {
+      setOpenModal(false);
+      setSuccessModal(true);
+      setFormData({
+        serviceType: "",
+        serviceDescription: "",
+        applianceType: "",
+        appointmentDate: "",
+        fullName: "",
+        email: "",
+        phone: "",
+        address: "",
+      });
+    },
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      await createAppointment(formData);
+    } catch {
+      // Error state is handled by react-query
+    }
+  };
 
   return (
     <div className="w-full">
-     
       <div
         className="
           min-h-[70vh]
@@ -35,70 +76,70 @@ const Book = () => {
       >
         {/* Navbar */}
         <nav className="relative flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-6 py-4">
-                <div className="text-sm font-semibold">Brand Logo</div>
-      
-                {/* Desktop Menu */}
-                <ul className="hidden md:flex gap-6 text-sm text-white">
-                  <li
-                    onClick={() => navigate("/")}
-                    className="cursor-pointer font-medium hover:text-[#0093FF] transition"
-                  >
-                    Home
-                  </li>
-                  <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
-                    Services
-                  </li>
-                  <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
-                    About us
-                  </li>
-                  <li
-                    onClick={() => navigate("/contact")}
-                    className="cursor-pointer opacity-90 hover:text-[#0093FF] transition"
-                  >
-                    Contact
-                  </li>
-                </ul>
-      
-                {/* Mobile Menu Icon */}
-                <img
-                  src={menuOpen ? Close : Menu}
-                  alt="menu"
-                  className="w-6 h-6 cursor-pointer md:hidden"
-                  onClick={() => setMenuOpen(!menuOpen)}
-                />
-      
-                {/* Mobile Dropdown */}
-                {menuOpen && (
-                  <div className="absolute top-full left-0 mt-4 w-full rounded-xl bg-black/90 backdrop-blur-md md:hidden">
-                    <ul className="flex flex-col items-center gap-6 py-6 text-sm">
-                      <li onClick={() => navigate("/")} className="cursor-pointer">
-                        Home
-                      </li>
-                      <li className="cursor-pointer">Services</li>
-                      <li className="cursor-pointer">About us</li>
-                      <li
-                        onClick={() => navigate("/contact")}
-                        className="cursor-pointer"
-                      >
-                        Contact
-                      </li>
-                    </ul>
-                  </div>
-                )}
-              </nav>
+          <div className="text-sm font-semibold">Brand Logo</div>
+
+          {/* Desktop Menu */}
+          <ul className="hidden md:flex gap-6 text-sm text-white">
+            <li
+              onClick={() => navigate("/")}
+              className="cursor-pointer font-medium hover:text-[#0093FF] transition"
+            >
+              Home
+            </li>
+            <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
+              Services
+            </li>
+            <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
+              About us
+            </li>
+            <li
+              onClick={() => navigate("/contact")}
+              className="cursor-pointer opacity-90 hover:text-[#0093FF] transition"
+            >
+              Contact
+            </li>
+          </ul>
+
+          {/* Mobile Menu Icon */}
+          <img
+            src={menuOpen ? Close : Menu}
+            alt="menu"
+            className="w-6 h-6 cursor-pointer md:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+          />
+
+          {/* Mobile Dropdown */}
+          {menuOpen && (
+            <div className="absolute top-full left-0 mt-4 w-full rounded-xl bg-black/90 backdrop-blur-md md:hidden">
+              <ul className="flex flex-col items-center gap-6 py-6 text-sm">
+                <li onClick={() => navigate("/")} className="cursor-pointer">
+                  Home
+                </li>
+                <li className="cursor-pointer">Services</li>
+                <li className="cursor-pointer">About us</li>
+                <li
+                  onClick={() => navigate("/contact")}
+                  className="cursor-pointer"
+                >
+                  Contact
+                </li>
+              </ul>
+            </div>
+          )}
+        </nav>
 
         {/* Hero Content */}
         <div className="flex min-h-[55vh] items-center justify-center text-center">
-        <div className="max-w-3xl">
-  <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl leading-tight">
-    Book an Appointment
-  </h1>
+          <div className="max-w-3xl">
+            <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl leading-tight">
+              Book an Appointment
+            </h1>
 
-  <p className="mt-3 text-xs sm:text-sm opacity-90">
-    Tell us about your service needs and we'll get back to you promptly
-  </p>
-</div>
-
+            <p className="mt-3 text-xs sm:text-sm opacity-90">
+              Tell us about your service needs and we'll get back to you
+              promptly
+            </p>
+          </div>
         </div>
       </div>
 
@@ -129,37 +170,56 @@ const Book = () => {
             {/* Service Information */}
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">Service Information</h3>
-                 <p>Service type *</p>
-              <select className="w-full rounded-lg border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400">
+              <p>Service type *</p>
+              <select
+                onChange={handleChange}
+                name="serviceType"
+                value={formData.serviceType}
+                className="w-full rounded-lg border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+              >
                 <option>Select a service type</option>
                 <option>Repair</option>
                 <option>Installation</option>
-                 <option>Setup</option> 
+                <option>Setup</option>
               </select>
-              
-               <h3>Service/Problem Description *</h3>
+
+              <h3>Service/Problem Description *</h3>
               <textarea
+                name="serviceDescription"
+                value={formData.serviceDescription}
+                onChange={handleChange}
                 rows="4"
-                placeholder="Please describe the issue or service needed in detail"
+                placeholder="my samsung tv is having an issue, so I want it to be checked"
                 className="w-full rounded-lg bg-[#EDF0F3] border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
-             
+
               <h3>Appliance Type</h3>
-              <select className="w-full rounded-lg border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400">
+              <select
+                className="w-full rounded-lg border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+                onChange={handleChange}
+                name="applianceType"
+                value={formData.applianceType}
+              >
                 <option>Select the appliance you want to fix</option>
-                    <option>Television</option>
+                <option>Television</option>
                 <option>Air Conditioner</option>
                 <option>Freezer</option>
                 <option>Solar</option>
-            
               </select>
 
+              <h3>Preferred Appointment Date *</h3>
+              <input
+                type="date"
+                name="appointmentDate"
+                value={formData.appointmentDate}
+                onChange={handleChange}
+                className="w-full rounded-lg border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+              />
 
               {/* Upload */}
-               <h2>Upload image (optional)</h2>
-               <p>Attach a picture of the issue or appliance</p>
+              <h2>Upload image (optional)</h2>
+              <p>Attach a picture of the issue or appliance</p>
               <div className="rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
-               
                 <p className="font-medium">Click to upload image</p>
                 <p className="text-xs mt-1">PNG, JPG up to 10MB</p>
               </div>
@@ -169,46 +229,63 @@ const Book = () => {
             <div className="mt-8 space-y-4">
               <h3 className="font-semibold text-lg">Contact Information</h3>
 
-              <p>Full Name <span className="text-red-500 ">*</span></p>
+              <p>
+                Full Name <span className="text-red-500 ">*</span>
+              </p>
               <input
                 type="text"
                 placeholder="Full Name"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
                 className="w-full rounded-lg bg-[#EDF0F3]  border px-4 py-3 text-sm"
               />
 
               <p>
-  Email Address <span className="text-red-500">*</span>
-</p>
+                Email Address <span className="text-red-500">*</span>
+              </p>
 
               <input
                 type="email"
                 placeholder="Email Address"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="w-full rounded-lg bg-[#EDF0F3]  border px-4 py-3 text-sm"
               />
 
-              <p>Phone Number <span className="text-red-500">*</span></p>
+              <p>
+                Phone Number <span className="text-red-500">*</span>
+              </p>
               <input
                 type="tel"
                 placeholder="Phone Number"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
                 className="w-full rounded-lg bg-[#EDF0F3]  border px-4 py-3 text-sm"
               />
 
-              <p>Service Address <span className="text-red-500">*</span></p>
+              <p>
+                Service Address <span className="text-red-500">*</span>
+              </p>
               <input
                 type="text"
                 placeholder="123 Main Street"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
                 className="w-full rounded-lg bg-[#EDF0F3]  border px-4 py-3 text-sm"
               />
             </div>
 
             {/* Submit */}
-          <button
-  onClick={() => setOpenModal(true)}
-  className="mt-8 w-full rounded-lg bg-slate-900 py-3 text-white font-semibold hover:bg-slate-800 transition"
->
-  Proceed
-</button>
-
+            <button
+              onClick={() => setOpenModal(true)}
+              className="mt-8 w-full rounded-lg bg-slate-900 py-3 text-white font-semibold hover:bg-slate-800 transition"
+            >
+              Proceed
+            </button>
 
             <p className="mt-3 text-center text-xs text-gray-500">
               By submitting this form, you agree to be contacted regarding your
@@ -218,53 +295,75 @@ const Book = () => {
         </div>
       </div>
 
-
-
-  {openModal && (
+      {openModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
             <h2 className="text-xl font-bold mb-2">Confirm details</h2>
 
-               <p className="text-sm text-gray-500 mb-4">
-        Confirm your information before submission.
-      </p>
+            <p className="text-sm text-gray-500 mb-4">
+              Confirm your information before submission.
+            </p>
 
-      {/* Service Info */}
-      <div className="mb-4">
-        <h3 className="font-semibold text-sm mb-2">Service Information</h3>
-        <p className="text-sm text-gray-600">Service Type: <span className="font-medium">Repair</span></p>
-        <p className="text-sm text-gray-600">Appliance: <span className="font-medium">Air Conditioner</span></p>
-        <p className="text-sm text-gray-600">Description: AC not cooling properly</p>
-      </div>
+            {/* Service Info */}
+            <div className="mb-4">
+              <h3 className="font-semibold text-sm mb-2">
+                Service Information
+              </h3>
+              <p className="text-sm text-gray-600">
+                Service Type:{" "}
+                <span className="font-medium">
+                  {formData.serviceType || "Not provided"}
+                </span>
+              </p>
+              <p className="text-sm text-gray-600">
+                Appliance:{" "}
+                <span className="font-medium">
+                  {formData.applianceType || "Not provided"}
+                </span>
+              </p>
+              <p className="text-sm text-gray-600">
+                Description: {formData.serviceDescription || "Not provided"}
+              </p>
+              <p className="text-sm text-gray-600">
+                Appointment Date: {formData.appointmentDate || "Not provided"}
+              </p>
+            </div>
 
-      {/* Image Preview */}
-      <div className="mb-4 flex gap-3">
-        <div className="h-20 w-20 rounded-lg border bg-gray-100 flex items-center justify-center text-xs text-gray-400">
-          Image
-        </div>
-      </div>
+            {/* Image Preview */}
+            <div className="mb-4 flex gap-3">
+              <div className="h-20 w-20 rounded-lg border bg-gray-100 flex items-center justify-center text-xs text-gray-400">
+                Image
+              </div>
+            </div>
 
-      <hr className="my-4" />
+            <hr className="my-4" />
 
-      {/* Contact Info */}
-      <div className="mb-6">
-        <h3 className="font-semibold text-sm mb-2">Contact Information</h3>
-        <p className="text-sm text-gray-600">Full Name: John Doe</p>
-        <p className="text-sm text-gray-600">Email: johndoe@gmail.com</p>
-        <p className="text-sm text-gray-600">Phone: +234 812 345 6789</p>
-        <p className="text-sm text-gray-600">Address: 123 Main Street</p>
-      </div>
-
+            {/* Contact Info */}
+            <div className="mb-6">
+              <h3 className="font-semibold text-sm mb-2">
+                Contact Information
+              </h3>
+              <p className="text-sm text-gray-600">
+                Full Name: {formData.fullName || "Not provided"}
+              </p>
+              <p className="text-sm text-gray-600">
+                Email: {formData.email || "Not provided"}
+              </p>
+              <p className="text-sm text-gray-600">
+                Phone: {formData.phone || "Not provided"}
+              </p>
+              <p className="text-sm text-gray-600">
+                Address: {formData.address || "Not provided"}
+              </p>
+            </div>
 
             <div className="flex gap-3 mt-6">
               <button
-                onClick={() => {
-                  setOpenModal(false);
-                  setSuccessModal(true);
-                }}
-                className="flex-1 rounded-lg bg-slate-900 py-2.5 text-white font-semibold"
+                onClick={handleSubmit}
+                disabled={isPending}
+                className="flex-1 rounded-lg bg-slate-900 py-2.5 text-white font-semibold disabled:opacity-60"
               >
-                Submit Request
+                {isPending ? "Submitting..." : "Submit Request"}
               </button>
 
               <button
@@ -274,6 +373,12 @@ const Book = () => {
                 Cancel Request
               </button>
             </div>
+
+            {isError && (
+              <p className="mt-4 text-sm text-red-600">
+                {error?.message || "Failed to submit. Please try again."}
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -295,8 +400,15 @@ const Book = () => {
               transition={{ duration: 0.3 }}
             >
               <div className="flex justify-between mb-6">
-                <button onClick={() => navigate("/")} className="text-sm text-gray-500">
-                  <img src={BackwardIcon} alt="back" className="inline h-4 w-4 mr-1" />
+                <button
+                  onClick={() => navigate("/")}
+                  className="text-sm text-gray-500"
+                >
+                  <img
+                    src={BackwardIcon}
+                    alt="back"
+                    className="inline h-4 w-4 mr-1"
+                  />
                   Back Home
                 </button>
 
@@ -321,7 +433,6 @@ const Book = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 };
@@ -388,10 +499,9 @@ export default Book;
 //       </div>
 
 //       {/* ================= CONFIRM MODAL ================= */}
-    
+
 //     </div>
 //   );
 // };
 
 // export default Book;
-

@@ -3,6 +3,8 @@ import LandingPage from './components/LandingPage'
 import Contact from './components/Contact'
 import Book from './components/Book'
 import { Routes, Route } from 'react-router-dom'
+import AdminLogin from './components/AdminLogin'
+import AdminDashboard from './components/AdminDashbaord'
 
 
 const App = () => {
@@ -15,6 +17,8 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/book" element={<Book />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admindashboard" element={<AdminDashboard />} />
       </Routes>
    
     </div>

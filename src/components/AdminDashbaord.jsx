@@ -13,7 +13,13 @@ const AdminDashboard = () => {
     status: "Pending",
   }));
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+const [showDetails, setShowDetails] = useState(false);
+const [selectedItem, setSelectedItem] = useState(null);
+
+
   return (
+    
     <div className="p-6 bg-white min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between border-b pb-4">
@@ -98,11 +104,19 @@ const AdminDashboard = () => {
                     {item.status}
                   </span>
                 </td>
-                <td className="px-4 py-3 flex items-center gap-3">
-                  <button className="text-black hover:underline">
-                    Review
-                  </button>
-                  <button className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-lg text-black hover:bg-red-100">
+                <td className="px-4 py-3 flex items-center gap-7">
+                 <button
+  className="text-black hover:underline"
+  onClick={() => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+    setShowDetails(false);
+  }}
+>
+  Review
+</button>
+{/* Deleting button */}
+                  <button className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-lg text-black hover:bg-red-100">
                     🗑
                   </button>
                 </td>
@@ -111,6 +125,114 @@ const AdminDashboard = () => {
           </tbody>
         </table>
       </div>
+
+      {isModalOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="bg-white w-full max-w-md rounded-xl p-6 relative">
+
+      {/* Close button */}
+      <button
+        onClick={() => setIsModalOpen(false)}
+        className="absolute top-5 right-2 p-1 text-gray-400 hover:text-black"
+      >
+        ✕
+      </button>
+
+      {/* Header */}
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="text-lg font-semibold">{selectedItem.name}</h3>
+          <p className="text-sm text-gray-500">
+            {selectedItem.appliance} | {selectedItem.service}
+          </p>
+        </div>
+
+        <span className="px-3 py-1 text-xs mt-6 p-10 font-bold rounded-full bg-gray-200 text-gray-700">
+          Pending Review
+        </span> 
+      </div>
+
+      {/* Main Info */}
+      <div className="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <p className="text-gray-400">Date Submitted</p>
+          <p className="font-medium">12-01-2026</p>
+        </div>
+
+        <div>
+          <p className="text-gray-400">Date Requested</p>
+          <p className="font-medium">18-01-2026</p>
+        </div>
+
+        <div>
+          <p className="text-gray-400">Phone number</p>
+          <p className="font-medium">+234 123 456 7890</p>
+        </div>
+
+        <div>
+          <p className="text-gray-400">Service Type</p>
+          <p className="font-medium">Repair</p>
+        </div>
+      </div>
+
+      {/* View more toggle */}
+      <button
+        onClick={() => setShowDetails(!showDetails)}
+        className="mt-4 text-sm text-gray-500 flex items-center gap-1"
+      >
+        {showDetails ? "Hide Details" : "View More"}
+        <span>{showDetails ? "▲" : "▼"}</span>
+      </button>
+
+      {/* Expanded content */}
+      {showDetails && (
+        <div className="mt-4 border-t pt-4 text-sm space-y-3">
+          <div>
+            <p className="font-medium">Customer Information</p>
+            <p className="text-gray-500">johndoe@example.com</p>
+            <p className="text-gray-500">123 main street</p>
+          </div>
+
+          <div>
+            <p className="font-medium">Service / Problem Description</p>
+            <p className="text-gray-500">
+              Air conditioner repair and mounting.
+            </p>
+          </div>
+
+          <div>
+            <p className="font-medium">Uploaded files</p>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {[
+                "Warehouse picture-front.jpg",
+                "Warehouse picture-top.jpg",
+                "Solar equipments.jpg",
+              ].map((file) => (
+                <span
+                  key={file}
+                  className="px-3 py-2  text-xs bg-gray-100 rounded-lg"
+                >
+                  📎 {file}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex gap-3 mt-6">
+        <button className="flex-1 bg-black text-white py-2 rounded-lg">
+          Approve
+        </button>
+        <button className="flex-1 border border-black py-2 rounded-lg">
+          Decline
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

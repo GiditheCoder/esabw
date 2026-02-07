@@ -14,6 +14,7 @@ const Book = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [formData, setFormData] = useState({
     serviceType: "",
     serviceDescription: "",
@@ -50,6 +51,31 @@ const Book = () => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files);
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setUploadedFiles((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            name: file.name,
+            size: (file.size / 1024).toFixed(2),
+            file: file,
+            preview: reader.result,
+          },
+        ]);
+      };
+      reader.readAsDataURL(file);
+    });
+    event.target.value = "";
+  };
+
+  const handleRemoveFile = (fileId) => {
+    setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
   };
 
   const handleSubmit = async () => {
@@ -219,10 +245,51 @@ const Book = () => {
               {/* Upload */}
               <h2>Upload image (optional)</h2>
               <p>Attach a picture of the issue or appliance</p>
-              <div className="rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+              <div 
+                onClick={() => document.getElementById("fileInput").click()}
+                className="rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-sm text-gray-500 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition"
+              >
                 <p className="font-medium">Click to upload image</p>
                 <p className="text-xs mt-1">PNG, JPG up to 10MB</p>
               </div>
+              <input
+                id="fileInput"
+                type="file"
+                multiple
+                accept="image/png,image/jpeg"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+
+              {/* Display uploaded files */}
+              {uploadedFiles.length > 0 && (
+                <div className="mt-4 space-y-3">
+                  {uploadedFiles.map((file) => (
+                    <div
+                      key={file.id}
+                      className="flex items-center gap-3 rounded-lg border border-gray-300 p-3"
+                    >
+                      <div className="w-16 h-16 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden">
+                        <img
+                          src={file.preview}
+                          alt={file.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-700 truncate">{file.name}</p>
+                        <p className="text-xs text-gray-500">{file.size}kb</p>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveFile(file.id)}
+                        className="flex-shrink-0 p-1.5 hover:bg-gray-200 rounded-full transition"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Contact Information */}

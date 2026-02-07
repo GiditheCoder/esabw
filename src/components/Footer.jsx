@@ -1,6 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <footer className="bg-gradient-to-b from-[#061826] to-[#04131F] text-white">
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -20,11 +27,11 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3 text-sm text-gray-400">
-              <li className="hover:text-[#0093FF] cursor-pointer">Home</li>
+              <li className="hover:text-[#0093FF] cursor-pointer" onClick={() => handleNavigation("/")}>Home</li>
               <li className="hover:text-[#0093FF] cursor-pointer">Services</li>
               <li className="hover:text-[#0093FF] cursor-pointer">About Us</li>
-              <li className="hover:text-[#0093FF] cursor-pointer">Contact</li>
-            <li className="hover:text-[#0093FF] cursor-pointer">
+              <li className="hover:text-[#0093FF] cursor-pointer" onClick={() => handleNavigation("/contact")}>Contact</li>
+            <li className="hover:text-[#0093FF] cursor-pointer" onClick={() => handleNavigation("/book")}>
                 Book Appointment
               </li>
             </ul>

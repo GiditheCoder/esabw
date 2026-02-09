@@ -246,7 +246,7 @@ const Contact = () => {
             </div>
             <div>
               <p className="text-sm font-medium">Phone Number</p>
-              <p className="text-sm text-gray-500">+234 123 456 7890</p>
+              <p className="text-sm text-gray-500">07771096969</p>
               <p className="text-xs text-gray-400">Mon – Sat, 8am – 5pm</p>
             </div>
           </div>
@@ -257,7 +257,7 @@ const Contact = () => {
             </div>
             <div>
               <p className="text-sm font-medium">Email</p>
-              <p className="text-sm text-gray-500">info@example.com</p>
+              <p className="text-sm text-gray-500">info@bigdadcommunications.com</p>
               <p className="text-xs text-gray-400">
                 Our team will respond within 24hours
               </p>
@@ -269,7 +269,7 @@ const Contact = () => {
         <div className="mt-6 bg-gray-100 border border-black rounded-xl h-48 flex items-center justify-center text-gray-500 text-sm">
           <img className="w-9 h-9" src={MapIcon} alt="" />
           Map integration placeholder <br />
-          123 Main Street
+          47 Ocean Street, PL2 2DJ, Plymouth
         </div>
       </div>
 

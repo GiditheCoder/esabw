@@ -4,6 +4,7 @@ import book from "../images/bookappointment.png";
 import { useNavigate } from "react-router-dom";
 import Menu from "../images/menu.png";
 import Close from "../images/CloseIcon.png";
+import bigDad from "../images/bigdad.jpeg";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Home = () => {
       >
         {/* Navbar */}
         <nav className="relative flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-6 py-4">
-          <div className="text-sm font-semibold">Brand Logo</div>
+          <img src={bigDad} alt="Brand Logo" className="h-10" />
 
           {/* Desktop Menu */}
           <ul className="hidden md:flex gap-6 text-sm text-white">

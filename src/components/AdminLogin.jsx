@@ -15,7 +15,7 @@ const AdminLogin = () => {
     event.preventDefault();
     try {
       await mutateAsync({ email, password });
-      navigate("/admindashboard");
+      navigate("/admin-dashboard");
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Login failed. Please try again.",

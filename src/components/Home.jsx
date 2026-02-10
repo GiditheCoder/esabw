@@ -18,8 +18,19 @@ const Home = () => {
         }}
       >
         {/* Navbar */}
-        <nav className="relative flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-6 py-4">
-          <div className="text-sm font-semibold">Brand Logo</div>
+        <nav className="fixed inset-x-4 top-4 flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-6 py-2">
+          <div className="flex items-center gap-2">
+            <img
+              src="/logo.png"
+              className="size-12 object-contain"
+              alt="Big Dad Communications World Logo"
+            />
+            <span className="font-medium text-lg leading-3 tracking-widest">
+              Big Dad
+              <br />
+              <span className="font-light text-sm"> Communications World</span>
+            </span>
+          </div>
 
           {/* Desktop Menu */}
           <ul className="hidden md:flex gap-6 text-sm text-white">

@@ -4,18 +4,53 @@ import { useNavigate } from "react-router-dom";
 import sparkle from "../images/sparkle.png";
 import BackwardIcon from "../images/Backwardicon.png";
 import CloseIcon from "../images/CloseIcon.png";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import Menu from "../images/menu.png";
 import Close from "../images/CloseIcon.png";
 import { useCreateAppointment } from "../hooks/server/mutations";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const Book = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [formData, setFormData] = useState({
+  const [uploadedFile, setUploadedFile] = useState(null);
+
+  const formSchema = z.object({
+    serviceType: z.string().min(1, "Service type is required"),
+    serviceDescription: z
+      .string()
+      .min(10, "Please provide at least 10 characters"),
+    applianceType: z.string().optional().or(z.literal("")),
+    appointmentDate: z.string().min(1, "Appointment date is required"),
+    fullName: z.string().min(1, "Full name is required"),
+    email: z.string().email("Enter a valid email address"),
+    phone: z.string().min(7, "Enter a valid phone number"),
+    address: z.string().min(1, "Address is required"),
+  });
+
+  const defaultValues = {
     serviceType: "",
     serviceDescription: "",
     applianceType: "",
@@ -24,7 +59,14 @@ const Book = () => {
     email: "",
     phone: "",
     address: "",
+  };
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues,
   });
+
+  const formValues = form.watch();
 
   const {
     mutateAsync: createAppointment,
@@ -35,56 +77,52 @@ const Book = () => {
     onSuccess: () => {
       setOpenModal(false);
       setSuccessModal(true);
-      setFormData({
-        serviceType: "",
-        serviceDescription: "",
-        applianceType: "",
-        appointmentDate: "",
-        fullName: "",
-        email: "",
-        phone: "",
-        address: "",
-      });
+      form.reset(defaultValues);
+      setUploadedFile(null);
     },
   });
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleFileUpload = (event) => {
-    const files = Array.from(event.target.files);
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setUploadedFiles((prev) => [
-          ...prev,
-          {
-            id: Date.now(),
-            name: file.name,
-            size: (file.size / 1024).toFixed(2),
-            file: file,
-            preview: reader.result,
-          },
-        ]);
-      };
-      reader.readAsDataURL(file);
-    });
+    const [file] = event.target.files || [];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setUploadedFile({
+        id: Date.now(),
+        name: file.name,
+        size: (file.size / 1024).toFixed(2),
+        file,
+        preview: reader.result,
+      });
+    };
+    reader.readAsDataURL(file);
     event.target.value = "";
   };
 
-  const handleRemoveFile = (fileId) => {
-    setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
   };
 
-  const handleSubmit = async () => {
+  const onSubmit = async (values) => {
+    const payload = new FormData();
+    Object.entries(values).forEach(([key, value]) => {
+      payload.append(key, value);
+    });
+    if (uploadedFile?.file) {
+      payload.append("image", uploadedFile.file, uploadedFile.name);
+    }
+
     try {
-      await createAppointment(formData);
+      await createAppointment(payload);
     } catch {
       // Error state is handled by react-query
     }
   };
+
+  const handleProceed = form.handleSubmit(() => setOpenModal(true));
 
   return (
     <div className="w-full">
@@ -192,172 +230,262 @@ const Book = () => {
               Please describe your needs below. All appointment requests are
               reviewed before confirmation.
             </p>
+            <Form {...form}>
+              <form onSubmit={handleProceed} className="space-y-4">
+                {/* Service Information */}
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Service Information</h3>
+                  <FormField
+                    control={form.control}
+                    name="serviceType"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>
+                          Service type <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a service type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Repair">Repair</SelectItem>
+                            <SelectItem value="Installation">
+                              Installation
+                            </SelectItem>
+                            <SelectItem value="Setup">Setup</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="text-red-500" />
+                      </FormItem>
+                    )}
+                  />
 
-            {/* Service Information */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Service Information</h3>
-              <p>Service type *</p>
-              <select
-                onChange={handleChange}
-                name="serviceType"
-                value={formData.serviceType}
-                className="w-full rounded-lg border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
-              >
-                <option>Select a service type</option>
-                <option>Repair</option>
-                <option>Installation</option>
-                <option>Setup</option>
-              </select>
+                  <FormField
+                    control={form.control}
+                    name="serviceDescription"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>
+                          Service/Problem Description{" "}
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            rows={4}
+                            placeholder="my samsung tv is having an issue, so I want it to be checked"
+                            className="w-full bg-[#EDF0F3]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-red-500" />
+                      </FormItem>
+                    )}
+                  />
 
-              <h3>Service/Problem Description *</h3>
-              <textarea
-                name="serviceDescription"
-                value={formData.serviceDescription}
-                onChange={handleChange}
-                rows="4"
-                placeholder="my samsung tv is having an issue, so I want it to be checked"
-                className="w-full rounded-lg bg-[#EDF0F3] border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
-              />
+                  <FormField
+                    control={form.control}
+                    name="applianceType"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Appliance Type</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select the appliance you want to fix" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Television">
+                              Television
+                            </SelectItem>
+                            <SelectItem value="Air Conditioner">
+                              Air Conditioner
+                            </SelectItem>
+                            <SelectItem value="Freezer">Freezer</SelectItem>
+                            <SelectItem value="Solar">Solar</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="text-red-500" />
+                      </FormItem>
+                    )}
+                  />
 
-              <h3>Appliance Type</h3>
-              <select
-                className="w-full rounded-lg border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
-                onChange={handleChange}
-                name="applianceType"
-                value={formData.applianceType}
-              >
-                <option>Select the appliance you want to fix</option>
-                <option>Television</option>
-                <option>Air Conditioner</option>
-                <option>Freezer</option>
-                <option>Solar</option>
-              </select>
+                  <FormField
+                    control={form.control}
+                    name="appointmentDate"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>
+                          Preferred Appointment Date{" "}
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input type="date" className="w-full" {...field} />
+                        </FormControl>
+                        <FormMessage className="text-red-500" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-              <h3>Preferred Appointment Date *</h3>
-              <input
-                type="date"
-                name="appointmentDate"
-                value={formData.appointmentDate}
-                onChange={handleChange}
-                className="w-full rounded-lg border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
-              />
+                {/* Upload */}
+                <h2>Upload image (optional)</h2>
+                <p>Attach a picture of the issue or appliance</p>
+                <div
+                  onClick={() => document.getElementById("fileInput").click()}
+                  className="rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-sm text-gray-500 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition"
+                >
+                  <p className="font-medium">Click to upload image</p>
+                  <p className="text-xs mt-1">PNG, JPG up to 10MB</p>
+                </div>
+                <input
+                  id="fileInput"
+                  type="file"
+                  multiple={false}
+                  accept="image/png,image/jpeg"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
 
-              {/* Upload */}
-              <h2>Upload image (optional)</h2>
-              <p>Attach a picture of the issue or appliance</p>
-              <div 
-                onClick={() => document.getElementById("fileInput").click()}
-                className="rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-sm text-gray-500 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition"
-              >
-                <p className="font-medium">Click to upload image</p>
-                <p className="text-xs mt-1">PNG, JPG up to 10MB</p>
-              </div>
-              <input
-                id="fileInput"
-                type="file"
-                multiple
-                accept="image/png,image/jpeg"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-
-              {/* Display uploaded files */}
-              {uploadedFiles.length > 0 && (
-                <div className="mt-4 space-y-3">
-                  {uploadedFiles.map((file) => (
-                    <div
-                      key={file.id}
-                      className="flex items-center gap-3 rounded-lg border border-gray-300 p-3"
-                    >
-                      <div className="w-16 h-16 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden">
+                {/* Display uploaded files */}
+                {uploadedFile && (
+                  <div className="mt-4 space-y-3">
+                    <div className="flex items-center gap-3 rounded-lg border border-gray-300 p-3">
+                      <div className="w-16 h-16 rounded-lg bg-gray-200 shrink-0 overflow-hidden">
                         <img
-                          src={file.preview}
-                          alt={file.name}
+                          src={uploadedFile.preview}
+                          alt={uploadedFile.name}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-gray-700 truncate">{file.name}</p>
-                        <p className="text-xs text-gray-500">{file.size}kb</p>
+                        <p className="font-medium text-gray-700 truncate">
+                          {uploadedFile.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {uploadedFile.size}kb
+                        </p>
                       </div>
                       <button
-                        onClick={() => handleRemoveFile(file.id)}
-                        className="flex-shrink-0 p-1.5 hover:bg-gray-200 rounded-full transition"
+                        onClick={handleRemoveFile}
+                        className="shrink-0 p-1.5 hover:bg-gray-200 rounded-full transition"
                       >
                         ✕
                       </button>
                     </div>
-                  ))}
+                  </div>
+                )}
+
+                {/* Contact Information */}
+                <div className="mt-8 space-y-4">
+                  <h3 className="font-semibold text-lg">Contact Information</h3>
+
+                  <FormField
+                    control={form.control}
+                    name="fullName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Full Name <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Full Name"
+                            className="bg-[#EDF0F3]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className={"text-red-500"} />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Email Address <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="Email Address"
+                            className="bg-[#EDF0F3]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className={"text-red-500"} />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Phone Number <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            placeholder="Phone Number"
+                            className="bg-[#EDF0F3]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className={"text-red-500"} />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Service Address{" "}
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="123 Main Street"
+                            className="bg-[#EDF0F3]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className={"text-red-500"} />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              )}
-            </div>
 
-            {/* Contact Information */}
-            <div className="mt-8 space-y-4">
-              <h3 className="font-semibold text-lg">Contact Information</h3>
+                {/* Submit */}
+                <Button
+                  type="submit"
+                  className="mt-8 w-full rounded-lg bg-slate-900 py-3 text-white font-semibold hover:bg-slate-800"
+                >
+                  Proceed
+                </Button>
 
-              <p>
-                Full Name <span className="text-red-500 ">*</span>
-              </p>
-              <input
-                type="text"
-                placeholder="Full Name"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                className="w-full rounded-lg bg-[#EDF0F3]  border px-4 py-3 text-sm"
-              />
-
-              <p>
-                Email Address <span className="text-red-500">*</span>
-              </p>
-
-              <input
-                type="email"
-                placeholder="Email Address"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full rounded-lg bg-[#EDF0F3]  border px-4 py-3 text-sm"
-              />
-
-              <p>
-                Phone Number <span className="text-red-500">*</span>
-              </p>
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full rounded-lg bg-[#EDF0F3]  border px-4 py-3 text-sm"
-              />
-
-              <p>
-                Service Address <span className="text-red-500">*</span>
-              </p>
-              <input
-                type="text"
-                placeholder="123 Main Street"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className="w-full rounded-lg bg-[#EDF0F3]  border px-4 py-3 text-sm"
-              />
-            </div>
-
-            {/* Submit */}
-            <button
-              onClick={() => setOpenModal(true)}
-              className="mt-8 w-full rounded-lg bg-slate-900 py-3 text-white font-semibold hover:bg-slate-800 transition"
-            >
-              Proceed
-            </button>
-
-            <p className="mt-3 text-center text-xs text-gray-500">
-              By submitting this form, you agree to be contacted regarding your
-              service request.
-            </p>
+                <p className="mt-3 text-center text-xs text-gray-500">
+                  By submitting this form, you agree to be contacted regarding
+                  your service request.
+                </p>
+              </form>
+            </Form>
           </div>
         </div>
       </div>
@@ -379,28 +507,38 @@ const Book = () => {
               <p className="text-sm text-gray-600">
                 Service Type:{" "}
                 <span className="font-medium">
-                  {formData.serviceType || "Not provided"}
+                  {formValues.serviceType || "Not provided"}
                 </span>
               </p>
               <p className="text-sm text-gray-600">
                 Appliance:{" "}
                 <span className="font-medium">
-                  {formData.applianceType || "Not provided"}
+                  {formValues.applianceType || "Not provided"}
                 </span>
               </p>
               <p className="text-sm text-gray-600">
-                Description: {formData.serviceDescription || "Not provided"}
+                Description: {formValues.serviceDescription || "Not provided"}
               </p>
               <p className="text-sm text-gray-600">
-                Appointment Date: {formData.appointmentDate || "Not provided"}
+                Appointment Date: {formValues.appointmentDate || "Not provided"}
               </p>
             </div>
 
             {/* Image Preview */}
-            <div className="mb-4 flex gap-3">
-              <div className="h-20 w-20 rounded-lg border bg-gray-100 flex items-center justify-center text-xs text-gray-400">
-                Image
-              </div>
+            <div className="mb-4 flex flex-wrap gap-3">
+              {uploadedFile ? (
+                <div className="h-20 w-20 rounded-lg border bg-gray-100 overflow-hidden">
+                  <img
+                    src={uploadedFile.preview}
+                    alt={uploadedFile.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="h-20 w-20 rounded-lg border bg-gray-100 flex items-center justify-center text-xs text-gray-400">
+                  No image
+                </div>
+              )}
             </div>
 
             <hr className="my-4" />
@@ -411,22 +549,22 @@ const Book = () => {
                 Contact Information
               </h3>
               <p className="text-sm text-gray-600">
-                Full Name: {formData.fullName || "Not provided"}
+                Full Name: {formValues.fullName || "Not provided"}
               </p>
               <p className="text-sm text-gray-600">
-                Email: {formData.email || "Not provided"}
+                Email: {formValues.email || "Not provided"}
               </p>
               <p className="text-sm text-gray-600">
-                Phone: {formData.phone || "Not provided"}
+                Phone: {formValues.phone || "Not provided"}
               </p>
               <p className="text-sm text-gray-600">
-                Address: {formData.address || "Not provided"}
+                Address: {formValues.address || "Not provided"}
               </p>
             </div>
 
             <div className="flex gap-3 mt-6">
               <button
-                onClick={handleSubmit}
+                onClick={form.handleSubmit(onSubmit)}
                 disabled={isPending}
                 className="flex-1 rounded-lg bg-slate-900 py-2.5 text-white font-semibold disabled:opacity-60"
               >
@@ -453,13 +591,13 @@ const Book = () => {
       {/* ================= SUCCESS MODAL (SEPARATE) ================= */}
       <AnimatePresence>
         {successModal && (
-          <motion.div
+          <Motion.div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div
+            <Motion.div
               className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-2xl"
               initial={{ scale: 0.9, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -484,7 +622,7 @@ const Book = () => {
                 </button>
               </div>
 
-              <motion.img
+              <Motion.img
                 src={sparkle}
                 className="mx-auto mb-6 h-20 w-20"
                 initial={{ scale: 0 }}
@@ -496,8 +634,8 @@ const Book = () => {
               <p className="text-sm text-gray-500">
                 Thank you! We will get back to you shortly.
               </p>
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </div>

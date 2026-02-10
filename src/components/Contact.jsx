@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import sparkle from "../images/sparkle.png";
 import BackwardIcon from "../images/Backwardicon.png";
 import CloseIcon from "../images/CloseIcon.png";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import MapIcon from "../images/mapicon.png";
 import Menu from "../images/menu.png";
 import Close from "../images/CloseIcon.png";
@@ -275,13 +275,13 @@ const Contact = () => {
 
       <AnimatePresence>
         {successModal && (
-          <motion.div
+          <Motion.div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div
+            <Motion.div
               className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-2xl"
               initial={{ scale: 0.9, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -306,7 +306,7 @@ const Contact = () => {
                 </button>
               </div>
 
-              <motion.img
+              <Motion.img
                 src={sparkle}
                 className="mx-auto mb-6 h-20 w-20"
                 initial={{ scale: 0 }}
@@ -318,8 +318,8 @@ const Contact = () => {
               <p className="text-sm text-gray-500">
                 Thank you! We will get back to you shortly.
               </p>
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </div>

@@ -1,7 +1,28 @@
-import React from "react";
+import { useState } from "react";
 import AdminImage from "../images/Admin.png";
+import { useAdminLogin } from "../hooks/server/mutations";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { mutateAsync, isPending } = useAdminLogin();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await mutateAsync({ email, password });
+      navigate("/admindashboard");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Login failed. Please try again.",
+      );
+    }
+  };
+
   return (
     <div className="flex h-screen bg-white">
       {/* Left image section */}
@@ -20,16 +41,20 @@ const AdminLogin = () => {
             Admin Login
           </h2>
 
-          <form className="space-y-5">
-            {/* Admin ID */}
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">
-                Admin ID
+                Email
               </label>
               <input
-                type="text"
-                placeholder="Enter ID"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                autoComplete="email"
                 className="w-full rounded-md border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900"
+                required
               />
             </div>
 
@@ -41,16 +66,21 @@ const AdminLogin = () => {
               <input
                 type="password"
                 placeholder="********"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="current-password"
                 className="w-full rounded-md border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900"
+                required
               />
             </div>
 
             {/* Button */}
             <button
               type="submit"
-              className="w-full rounded-md bg-slate-900 py-3 text-m font-medium text-white hover:bg-slate-800 transition"
+              disabled={isPending}
+              className="w-full rounded-md bg-slate-900 py-3 text-m font-medium text-white hover:bg-slate-800 transition disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Login
+              {isPending ? "Logging in..." : "Login"}
             </button>
           </form>
         </div>

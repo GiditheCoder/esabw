@@ -10,12 +10,30 @@ const apiClient = axios.create({
   },
 });
 
+const authorizeedApiClient = axios.create({
+  baseURL: apiBaseUrl,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+authorizeedApiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const useCreateAppointment = (options = {}) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (payload) => {
-      const response = await apiClient.post("/api/v1/appointments", payload);
+      const isFormData = payload instanceof FormData;
+      const response = await apiClient.post("/api/v1/appointments", payload, {
+        headers: isFormData ? { "Content-Type": "multipart/form-data" } : {},
+      });
       return response.data;
     },
     onSuccess: (data, variables, context) => {
@@ -34,3 +52,40 @@ export const useCreateMessage = (options = {}) =>
     },
     ...options,
   });
+
+export const useAdminLogin = () =>
+  useMutation({
+    mutationFn: async ({ email, password }) => {
+      const response = await apiClient.post("/api/v1/admin/login", {
+        email,
+        password,
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      console.log("Login successful:", data);
+      if (data.data.token) {
+        localStorage.setItem("token", data.data.token);
+      }
+    },
+  });
+
+export const useUpdateAppointmentStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, status, rejectionReason = "" }) => {
+      const response = await authorizeedApiClient.patch(
+        `/api/v1/appointments/${id}`,
+        {
+          status,
+          rejectionReason,
+        },
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    },
+  });
+};

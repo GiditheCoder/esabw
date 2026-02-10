@@ -11,18 +11,20 @@ import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Pending");
+  const [activeTab, setActiveTab] = useState("All");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   const { data, isLoading, refetch, isFetching, isError, error } =
     useGetAllAppointments({
       status:
         activeTab.toLowerCase() === "all" ? undefined : activeTab.toLowerCase(),
     });
-  const { mutateAsync: approveAppointment, isPending: isApproving } =
+  const { mutateAsync: updateAppointmentStatus, isPending: isUpdating } =
     useUpdateAppointmentStatus();
 
   useEffect(() => {
@@ -45,11 +47,31 @@ const AdminDashboard = () => {
 
   const handleApproval = async (id) => {
     try {
-      await approveAppointment({ id, status: "approved" });
+      await updateAppointmentStatus({ id, status: "approved" });
       setIsModalOpen(false);
       toast.success("Appointment approved successfully!");
     } catch (error) {
       console.error("Error approving appointment:", error);
+    }
+  };
+
+  const handleDecline = async () => {
+    if (!rejectionReason.trim()) {
+      toast.error("Please add a rejection reason.");
+      return;
+    }
+
+    try {
+      await updateAppointmentStatus({
+        id: selectedItem._id,
+        status: "rejected",
+        rejectionReason: rejectionReason.trim(),
+      });
+      setIsDeclineModalOpen(false);
+      setRejectionReason("");
+      toast.success("Appointment rejected successfully!");
+    } catch (error) {
+      console.error("Error rejecting appointment:", error);
     }
   };
 
@@ -87,7 +109,7 @@ const AdminDashboard = () => {
           const statusColors = {
             pending: "bg-yellow-100 text-yellow-800",
             approved: "bg-green-100 text-green-800",
-            declined: "bg-red-100 text-red-800",
+            rejected: "bg-red-100 text-red-800",
           };
           return (
             <span
@@ -147,13 +169,6 @@ const AdminDashboard = () => {
           >
             <RefreshCw
               className={`w-5 h-5 ${isFetching ? "animate-spin" : ""}`}
-            />
-          </button>
-          <button className="w-9 h-9 flex items-center justify-center bg-sky-900-500 rounded-lg">
-            <img
-              src={bell}
-              alt="bell"
-              className="w-5 h-5 filter invert brightness-0"
             />
           </button>
         </div>
@@ -295,14 +310,60 @@ const AdminDashboard = () => {
             <div className="flex gap-2 sm:gap-3 mt-6">
               <button
                 onClick={() => handleApproval(selectedItem._id)}
-                className="flex-1 bg-black text-white py-2 rounded-lg text-sm hover:bg-gray-900"
+                className="flex-1 bg-black text-white py-2 rounded-lg text-sm hover:bg-gray-900 disabled:opacity-70"
+                disabled={isUpdating}
               >
-                {isApproving ? "Approving..." : "Approve"}
+                {isUpdating ? "Approving..." : "Approve"}
               </button>
-              <button className="flex-1 border border-black py-2 rounded-lg text-sm hover:bg-gray-50">
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setIsDeclineModalOpen(true);
+                }}
+                className="flex-1 border border-black py-2 rounded-lg text-sm hover:bg-gray-50"
+              >
                 Decline
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {isDeclineModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 sm:p-0">
+          <div className="bg-white w-full max-w-lg rounded-2xl p-6 sm:p-8 relative">
+            <button
+              onClick={() => setIsDeclineModalOpen(false)}
+              className="absolute top-4 right-4 p-1 text-gray-500 hover:text-black"
+            >
+              <XCircle strokeWidth={1.5} className="w-5 h-5" />
+            </button>
+
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+              Additional Information
+            </h3>
+
+            <div className="mt-4">
+              <label className="text-sm font-semibold text-gray-900">
+                Why we declined your request{" "}
+                <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                value={rejectionReason}
+                onChange={(event) => setRejectionReason(event.target.value)}
+                placeholder="Add additional note here"
+                rows={4}
+                className="mt-2 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+              />
+            </div>
+
+            <button
+              onClick={handleDecline}
+              disabled={isUpdating}
+              className="mt-6 w-full rounded-lg bg-slate-900 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-70"
+            >
+              {isUpdating ? "Declining..." : "Decline"}
+            </button>
           </div>
         </div>
       )}

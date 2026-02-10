@@ -29,7 +29,8 @@ const Home = () => {
             <span className="font-medium text-lg leading-3 tracking-widest">
               Big Dad
               <br />
-              <span className="font-light text-sm"> Communications World</span>
+              <span className="font-light text-sm">
+                Communications World</span>
             </span>
           </div>
 

@@ -89,3 +89,19 @@ export const useUpdateAppointmentStatus = () => {
     },
   });
 };
+
+export const useDeleteAppointment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id) => {
+      const response = await authorizeedApiClient.delete(
+        `/api/v1/appointments/${id}`,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    },
+  });
+};

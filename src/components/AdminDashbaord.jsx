@@ -4,7 +4,10 @@ import DataTable from "./ui/data-table";
 import { useGetAllAppointments } from "@/hooks/server/queries";
 import moment from "moment";
 import { Image, RefreshCw, Trash2, XCircle } from "lucide-react";
-import { useUpdateAppointmentStatus } from "@/hooks/server/mutations";
+import {
+  useDeleteAppointment,
+  useUpdateAppointmentStatus,
+} from "@/hooks/server/mutations";
 import { toast } from "react-toastify";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
@@ -15,8 +18,10 @@ const AdminDashboard = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
 
   const { data, isLoading, refetch, isFetching, isError, error } =
@@ -26,6 +31,8 @@ const AdminDashboard = () => {
     });
   const { mutateAsync: updateAppointmentStatus, isPending: isUpdating } =
     useUpdateAppointmentStatus();
+  const { mutateAsync: deleteAppointment, isPending: isDeleting } =
+    useDeleteAppointment();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -72,6 +79,26 @@ const AdminDashboard = () => {
       toast.success("Appointment rejected successfully!");
     } catch (error) {
       console.error("Error rejecting appointment:", error);
+    }
+  };
+
+  const handleDelete = (id) => {
+    setDeleteTargetId(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetId) {
+      return;
+    }
+
+    try {
+      await deleteAppointment(deleteTargetId);
+      setIsDeleteModalOpen(false);
+      setDeleteTargetId(null);
+      toast.success("Appointment deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting appointment:", error);
     }
   };
 
@@ -138,7 +165,11 @@ const AdminDashboard = () => {
               >
                 Review
               </button>
-              <button className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center bg-gray-100 text-red-500 rounded-lg hover:bg-red-100 shrink-0">
+              <button
+                onClick={() => handleDelete(item._id)}
+                disabled={isDeleting}
+                className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center bg-gray-100 text-red-500 rounded-lg hover:bg-red-100 shrink-0 disabled:opacity-60"
+              >
                 <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
             </div>
@@ -364,6 +395,49 @@ const AdminDashboard = () => {
             >
               {isUpdating ? "Declining..." : "Decline"}
             </button>
+          </div>
+        </div>
+      )}
+
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 sm:p-0">
+          <div className="bg-white w-full max-w-lg rounded-2xl p-6 sm:p-8 relative">
+            <button
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                setDeleteTargetId(null);
+              }}
+              className="absolute top-4 right-4 p-1 text-gray-500 hover:text-black"
+            >
+              <XCircle strokeWidth={1.5} className="w-5 h-5" />
+            </button>
+
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+              Delete Appointment
+            </h3>
+            <p className="mt-2 text-sm text-gray-600">
+              Are you sure you want to delete appointment? This action cannot be
+              undone.
+            </p>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setDeleteTargetId(null);
+                }}
+                className="flex-1 rounded-lg border border-gray-300 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="flex-1 rounded-lg bg-red-600 py-3 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-70"
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}

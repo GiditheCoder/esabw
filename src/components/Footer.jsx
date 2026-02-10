@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+
 const Footer = () => {
   const navigate = useNavigate();
 
@@ -42,13 +43,13 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
             <ul className="space-y-3 text-sm text-gray-400">
               <li className="flex items-center gap-2">
-                📞 <span>+234 123 456 7890</span>
+                📞 <span>07771096969</span>
               </li>
               <li className="flex items-center gap-2">
-                ✉️ <span>johndoe@example.com</span>
+                ✉️ <span>info@bigdadcommunications.com</span>
               </li>
               <li className="flex items-center gap-2">
-                📍 <span>123 main street</span>
+                📍 <span>47 Ocean Street, PL2 2DJ, Plymouth</span>
               </li>
             </ul>
           </div>

@@ -4,6 +4,7 @@ import book from "../images/bookappointment.png";
 import { useNavigate } from "react-router-dom";
 import Menu from "../images/menu.png";
 import Close from "../images/CloseIcon.png";
+import bigDad from "../images/bigdad.jpeg";
 
 const Home = () => {
   const navigate = useNavigate();

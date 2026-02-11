@@ -3,11 +3,13 @@ import AdminImage from "../images/Admin.png";
 import { useAdminLogin } from "../hooks/server/mutations";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeClosed } from "lucide-react";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { mutateAsync, isPending } = useAdminLogin();
 
@@ -63,15 +65,24 @@ const AdminLogin = () => {
               <label className="block text-sm font-medium text-slate-700 mb-1">
                 Password
               </label>
-              <input
-                type="password"
-                placeholder="********"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                autoComplete="current-password"
-                className="w-full rounded-md border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="********"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  autoComplete="current-password"
+                  className="w-full rounded-md border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-slate-600 hover:text-slate-900"
+                >
+                  {showPassword ? <EyeClosed /> : <Eye />}
+                </button>
+              </div>
             </div>
 
             {/* Button */}

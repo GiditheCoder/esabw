@@ -35,17 +35,26 @@ const AdminDashboard = () => {
   const { mutateAsync: deleteAppointment, isPending: isDeleting } =
     useDeleteAppointment();
 
-  // Filter appointments by date
+  // Filter and sort appointments by date
   const filteredAppointments = useMemo(() => {
     if (!data?.appointments) return [];
 
-    if (!dateFilter) return data.appointments;
+    let appointments = data.appointments;
 
-    return data.appointments.filter((appointment) => {
-      const appointmentDate = moment(appointment.appointmentDate).format(
-        "YYYY-MM-DD",
-      );
-      return appointmentDate === dateFilter;
+    if (dateFilter) {
+      appointments = appointments.filter((appointment) => {
+        const appointmentDate = moment(appointment.appointmentDate).format(
+          "YYYY-MM-DD",
+        );
+        return appointmentDate === dateFilter;
+      });
+    }
+
+    // Sort by createdAt in descending order (latest first)
+    return appointments.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA; // Descending order
     });
   }, [data, dateFilter]);
 

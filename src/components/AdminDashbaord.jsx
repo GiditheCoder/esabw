@@ -22,6 +22,7 @@ const AdminDashboard = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [rejectionError, setRejectionError] = useState("");
   const [dateFilter, setDateFilter] = useState("");
 
   const { data, isLoading, refetch, isFetching, isError, error } =
@@ -78,7 +79,14 @@ const AdminDashboard = () => {
 
   const handleDecline = async () => {
     if (!rejectionReason.trim()) {
+      setRejectionError("Please add a rejection reason.");
       toast.error("Please add a rejection reason.");
+      return;
+    }
+
+    if (rejectionReason.trim().length < 10) {
+      setRejectionError("Rejection reason must be at least 10 characters.");
+      toast.error("Rejection reason must be at least 10 characters.");
       return;
     }
 
@@ -90,6 +98,7 @@ const AdminDashboard = () => {
       });
       setIsDeclineModalOpen(false);
       setRejectionReason("");
+      setRejectionError("");
       toast.success("Appointment rejected successfully!");
     } catch (error) {
       console.error("Error rejecting appointment:", error);
@@ -416,11 +425,24 @@ const AdminDashboard = () => {
               </label>
               <textarea
                 value={rejectionReason}
-                onChange={(event) => setRejectionReason(event.target.value)}
-                placeholder="Add additional note here"
+                onChange={(event) => {
+                  setRejectionReason(event.target.value);
+                  setRejectionError("");
+                }}
+                placeholder="Add additional note here (minimum 10 characters)"
                 rows={4}
-                className="mt-2 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className={`mt-2 w-full rounded-lg border bg-gray-100 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 ${
+                  rejectionError
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-slate-900"
+                }`}
               />
+              {rejectionError && (
+                <p className="mt-1 text-xs text-red-500">{rejectionError}</p>
+              )}
+              <p className="mt-1 text-xs text-gray-500">
+                {rejectionReason.length}/10 characters minimum
+              </p>
             </div>
 
             <button

@@ -22,6 +22,7 @@ const AdminDashboard = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
 
   const { data, isLoading, refetch, isFetching, isError, error } =
     useGetAllAppointments({
@@ -32,6 +33,18 @@ const AdminDashboard = () => {
     useUpdateAppointmentStatus();
   const { mutateAsync: deleteAppointment, isPending: isDeleting } =
     useDeleteAppointment();
+
+  // Filter appointments by date
+  const filteredAppointments = useMemo(() => {
+    if (!data?.appointments) return [];
+    
+    if (!dateFilter) return data.appointments;
+    
+    return data.appointments.filter((appointment) => {
+      const appointmentDate = moment(appointment.appointmentDate).format("YYYY-MM-DD");
+      return appointmentDate === dateFilter;
+    });
+  }, [data?.appointments, dateFilter]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -203,8 +216,12 @@ const AdminDashboard = () => {
 
         <div className="flex items-center gap-3">
           <button
-            onClick={() => refetch()}
+            onClick={() => {
+              refetch();
+              setDateFilter("");
+            }}
             className="w-9 h-9 flex items-center justify-center border rounded-lg hover:bg-gray-100"
+            title="Refresh and reset filters"
           >
             <RefreshCw
               className={`w-5 h-5 ${isFetching ? "animate-spin" : ""}`}
@@ -228,7 +245,16 @@ const AdminDashboard = () => {
               </TabsTrigger>
             ))}
           </TabsList>
-          <div className="flex gap-2 sm:gap-3 sm:w-auto">
+          <div className="flex gap-2 sm:gap-3 items-end sm:w-auto">
+            <div className="flex items-center gap-2">
+              <label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Date</label>
+              <input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
             <button className="flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 whitespace-nowrap">
               Download PDF
             </button>
@@ -243,7 +269,7 @@ const AdminDashboard = () => {
           <DataTable
             isLoading={isLoading}
             columns={columns}
-            data={data?.appointments || []}
+            data={filteredAppointments || []}
           />
         </div>
       </Tabs>

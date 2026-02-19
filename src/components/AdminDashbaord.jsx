@@ -128,6 +128,15 @@ const AdminDashboard = () => {
         ),
       },
       {
+        accessorKey: "appointmentDate",
+        header: "Date Requested",
+        cell: ({ row }) => (
+          <span>
+            {moment(row.getValue("appointmentDate")).format("DD-MM-YYYY")}
+          </span>
+        ),
+      },
+      {
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => {
@@ -176,7 +185,7 @@ const AdminDashboard = () => {
         },
       },
     ],
-    [setIsModalOpen, setSelectedItem, setShowDetails],
+    [setIsModalOpen, setSelectedItem, setShowDetails, isDeleting],
   );
 
   return (

@@ -37,14 +37,16 @@ const AdminDashboard = () => {
   // Filter appointments by date
   const filteredAppointments = useMemo(() => {
     if (!data?.appointments) return [];
-    
+
     if (!dateFilter) return data.appointments;
-    
+
     return data.appointments.filter((appointment) => {
-      const appointmentDate = moment(appointment.appointmentDate).format("YYYY-MM-DD");
+      const appointmentDate = moment(appointment.appointmentDate).format(
+        "YYYY-MM-DD",
+      );
       return appointmentDate === dateFilter;
     });
-  }, [data?.appointments, dateFilter]);
+  }, [data, dateFilter]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -247,7 +249,9 @@ const AdminDashboard = () => {
           </TabsList>
           <div className="flex gap-2 sm:gap-3 items-end sm:w-auto">
             <div className="flex items-center gap-2">
-              <label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Filter by Date</label>
+              <label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">
+                Filter by Date
+              </label>
               <input
                 type="date"
                 value={dateFilter}
@@ -255,12 +259,9 @@ const AdminDashboard = () => {
                 className="px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <button className="flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 whitespace-nowrap">
+            {/* <button className="flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 whitespace-nowrap">
               Download PDF
-            </button>
-            <button className="flex-1 sm:flex-none px-2 sm:px-4 py-2 text-xs sm:text-sm border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 whitespace-nowrap">
-              Clear All
-            </button>
+            </button> */}
           </div>
         </div>
 

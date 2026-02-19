@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import box1 from "../images/box1.png";
 import book from "../images/bookappointment.png";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,17 @@ import bigDad from "../images/bigdad.jpeg";
 const Home = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 500);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -19,7 +30,13 @@ const Home = () => {
         }}
       >
         {/* Navbar */}
-        <nav className="fixed inset-x-4 top-4 flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-6 py-2">
+        <nav
+          className={`fixed z-100 inset-x-4 top-4 flex items-center justify-between border rounded-xl px-6 py-2 transition-all duration-300 ${
+            isScrolled
+              ? "bg-black border-gray-700"
+              : "bg-white/10 backdrop-blur-md border-white"
+          }`}
+        >
           <div className="flex items-center gap-2">
             <img
               src="/logo.png"
@@ -29,8 +46,7 @@ const Home = () => {
             <span className="font-medium text-lg leading-3 tracking-widest">
               Big Dad
               <br />
-              <span className="font-light text-sm">
-                Communications World</span>
+              <span className="font-light text-sm">Communications World</span>
             </span>
           </div>
 

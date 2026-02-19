@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import bell from "../images/bell.png";
 import DataTable from "./ui/data-table";
 import { useGetAllAppointments } from "@/hooks/server/queries";
 import moment from "moment";

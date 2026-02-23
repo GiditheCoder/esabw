@@ -5,8 +5,6 @@ import sparkle from "../images/sparkle.png";
 import BackwardIcon from "../images/Backwardicon.png";
 import CloseIcon from "../images/CloseIcon.png";
 import { motion as Motion, AnimatePresence } from "framer-motion";
-import Menu from "../images/menu.png";
-import Close from "../images/CloseIcon.png";
 import { useCreateAppointment } from "../hooks/server/mutations";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -29,13 +27,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import Navbar from "./Navbar";
 
 const Book = () => {
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [showCustomAppliance, setShowCustomAppliance] = useState(false);
 
   const formSchema = z.object({
     serviceType: z.string().min(1, "Service type is required"),
@@ -43,6 +42,7 @@ const Book = () => {
       .string()
       .min(10, "Please provide at least 10 characters"),
     applianceType: z.string().optional().or(z.literal("")),
+    customApplianceType: z.string().optional().or(z.literal("")),
     appointmentDate: z.string().min(1, "Appointment date is required"),
     fullName: z.string().min(1, "Full name is required"),
     email: z.string().email("Enter a valid email address"),
@@ -54,6 +54,7 @@ const Book = () => {
     serviceType: "",
     serviceDescription: "",
     applianceType: "",
+    customApplianceType: "",
     appointmentDate: "",
     fullName: "",
     email: "",
@@ -139,58 +140,7 @@ const Book = () => {
         }}
       >
         {/* Navbar */}
-        <nav className="relative flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-6 py-4">
-          <div className="text-sm font-semibold">Brand Logo</div>
-
-          {/* Desktop Menu */}
-          <ul className="hidden md:flex gap-6 text-sm text-white">
-            <li
-              onClick={() => navigate("/")}
-              className="cursor-pointer font-medium hover:text-[#0093FF] transition"
-            >
-              Home
-            </li>
-            <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
-              Services
-            </li>
-            <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
-              About us
-            </li>
-            <li
-              onClick={() => navigate("/contact")}
-              className="cursor-pointer opacity-90 hover:text-[#0093FF] transition"
-            >
-              Contact
-            </li>
-          </ul>
-
-          {/* Mobile Menu Icon */}
-          <img
-            src={menuOpen ? Close : Menu}
-            alt="menu"
-            className="w-6 h-6 cursor-pointer md:hidden"
-            onClick={() => setMenuOpen(!menuOpen)}
-          />
-
-          {/* Mobile Dropdown */}
-          {menuOpen && (
-            <div className="absolute top-full left-0 mt-4 w-full rounded-xl bg-black/90 backdrop-blur-md md:hidden">
-              <ul className="flex flex-col items-center gap-6 py-6 text-sm">
-                <li onClick={() => navigate("/")} className="cursor-pointer">
-                  Home
-                </li>
-                <li className="cursor-pointer">Services</li>
-                <li className="cursor-pointer">About us</li>
-                <li
-                  onClick={() => navigate("/contact")}
-                  className="cursor-pointer"
-                >
-                  Contact
-                </li>
-              </ul>
-            </div>
-          )}
-        </nav>
+        <Navbar />
 
         {/* Hero Content */}
         <div className="flex min-h-[55vh] items-center justify-center text-center">
@@ -277,7 +227,7 @@ const Book = () => {
                         <FormControl>
                           <Textarea
                             rows={4}
-                            placeholder="my samsung tv is having an issue, so I want it to be checked"
+                            placeholder="Describe the issue with your appliance and what issue you're experiencing"
                             className="w-full bg-[#EDF0F3]"
                             {...field}
                           />
@@ -294,7 +244,13 @@ const Book = () => {
                       <FormItem className="w-full">
                         <FormLabel>Appliance Type</FormLabel>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            setShowCustomAppliance(value === "Others");
+                            if (value !== "Others") {
+                              form.setValue("customApplianceType", "");
+                            }
+                          }}
                           value={field.value}
                         >
                           <FormControl>
@@ -311,12 +267,36 @@ const Book = () => {
                             </SelectItem>
                             <SelectItem value="Freezer">Freezer</SelectItem>
                             <SelectItem value="Solar">Solar</SelectItem>
+                            <SelectItem value="Others">Others</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
+
+                  {showCustomAppliance && (
+                    <FormField
+                      control={form.control}
+                      name="customApplianceType"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>
+                            Specify Appliance Type{" "}
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter your appliance type"
+                              className="w-full"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-red-500" />
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
                   <FormField
                     control={form.control}

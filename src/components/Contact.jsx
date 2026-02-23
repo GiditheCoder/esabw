@@ -6,13 +6,11 @@ import BackwardIcon from "../images/Backwardicon.png";
 import CloseIcon from "../images/CloseIcon.png";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import MapIcon from "../images/mapicon.png";
-import Menu from "../images/menu.png";
-import Close from "../images/CloseIcon.png";
 import { useCreateMessage } from "../hooks/server/mutations";
+import Navbar from "./Navbar";
 
 const Contact = () => {
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -67,82 +65,7 @@ const Contact = () => {
           backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url(${boxappointment})`,
         }}
       >
-        {/* <nav className="flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-9 py-5">
-          <div className="text-sm font-semibold">Brand Logo</div>
-
-        <ul className="flex gap-6 text-sm text-white">
-  <li
-   onClick={() => navigate("/")}
-   className="cursor-pointer font-medium hover:text-[#0093FF] transition-colors duration-300">
-    Home
-  </li>
-  <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition-colors duration-300">
-    Services
-  </li>
-  <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition-colors duration-300">
-    About us
-  </li>
-  <li
-  onClick={() => navigate("/contact")}
-   className="cursor-pointer opacity-90 hover:text-[#0093FF] transition-colors duration-300">
-    Contact
-  </li>
-</ul>
-        </nav> */}
-
-        <nav className="relative flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-6 py-4">
-          <div className="text-sm font-semibold">Brand Logo</div>
-
-          {/* Desktop Menu */}
-          <ul className="hidden md:flex gap-6 text-sm text-white">
-            <li
-              onClick={() => navigate("/")}
-              className="cursor-pointer font-medium hover:text-[#0093FF] transition"
-            >
-              Home
-            </li>
-            <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
-              Services
-            </li>
-            <li className="cursor-pointer opacity-90 hover:text-[#0093FF] transition">
-              About us
-            </li>
-            <li
-              onClick={() => navigate("/contact")}
-              className="cursor-pointer opacity-90 hover:text-[#0093FF] transition"
-            >
-              Contact
-            </li>
-          </ul>
-
-          {/* Mobile Menu Icon */}
-          <img
-            src={menuOpen ? Close : Menu}
-            alt="menu"
-            className="w-6 h-6 cursor-pointer md:hidden"
-            onClick={() => setMenuOpen(!menuOpen)}
-          />
-
-          {/* Mobile Dropdown */}
-          {menuOpen && (
-            <div className="absolute top-full left-0 mt-4 w-full rounded-xl bg-black/90 backdrop-blur-md md:hidden">
-              <ul className="flex flex-col items-center gap-6 py-6 text-sm">
-                <li onClick={() => navigate("/")} className="cursor-pointer">
-                  Home
-                </li>
-                <li className="cursor-pointer">Services</li>
-                <li className="cursor-pointer">About us</li>
-                <li
-                  onClick={() => navigate("/contact")}
-                  className="cursor-pointer"
-                >
-                  Contact
-                </li>
-              </ul>
-            </div>
-          )}
-        </nav>
-
+        <Navbar />
         <div className="flex min-h-[55vh] items-center justify-center text-center">
           <div className="max-w-3xl">
             <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl">
@@ -257,7 +180,9 @@ const Contact = () => {
             </div>
             <div>
               <p className="text-sm font-medium">Email</p>
-              <p className="text-sm text-gray-500">info@bigdadcommunications.com</p>
+              <p className="text-sm text-gray-500">
+                info@bigdadcommunications.com
+              </p>
               <p className="text-xs text-gray-400">
                 Our team will respond within 24hours
               </p>

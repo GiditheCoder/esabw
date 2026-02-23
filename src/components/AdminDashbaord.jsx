@@ -10,6 +10,7 @@ import {
 import { toast } from "react-toastify";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
+import Throbber from "./ui/throbber";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -29,25 +30,14 @@ const AdminDashboard = () => {
     useGetAllAppointments({
       status:
         activeTab.toLowerCase() === "all" ? undefined : activeTab.toLowerCase(),
+      startDate: dateFilter || undefined,
     });
   const { mutateAsync: updateAppointmentStatus, isPending: isUpdating } =
     useUpdateAppointmentStatus();
   const { mutateAsync: deleteAppointment, isPending: isDeleting } =
     useDeleteAppointment();
 
-  // Filter appointments by date
-  const filteredAppointments = useMemo(() => {
-    if (!data?.appointments) return [];
-
-    if (!dateFilter) return data.appointments;
-
-    return data.appointments.filter((appointment) => {
-      const appointmentDate = moment(appointment.appointmentDate).format(
-        "YYYY-MM-DD",
-      );
-      return appointmentDate === dateFilter;
-    });
-  }, [data, dateFilter]);
+  const appointments = data?.appointments || [];
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -74,6 +64,16 @@ const AdminDashboard = () => {
       toast.success("Appointment approved successfully!");
     } catch (error) {
       console.error("Error approving appointment:", error);
+    }
+  };
+
+  const handleInspection = async (id) => {
+    try {
+      await updateAppointmentStatus({ id, status: "inspected" });
+      setIsModalOpen(false);
+      toast.success("Appointment marked as inspected!");
+    } catch (error) {
+      console.error("Error marking appointment as inspected:", error);
     }
   };
 
@@ -169,6 +169,7 @@ const AdminDashboard = () => {
             pending: "bg-yellow-100 text-yellow-800",
             approved: "bg-green-100 text-green-800",
             rejected: "bg-red-100 text-red-800",
+            inspected: "bg-blue-100 text-blue-800",
           };
           return (
             <span
@@ -246,15 +247,17 @@ const AdminDashboard = () => {
       <Tabs className={"mt-4"} value={activeTab} onValueChange={setActiveTab}>
         <div className="flex items-center justify-between">
           <TabsList className="sm:w-auto gap-2 bg-transparent p-0">
-            {["All", "Pending", "Approved", "Rejected"].map((tab) => (
-              <TabsTrigger
-                key={tab}
-                value={tab}
-                className="rounded-none border-b-2 border-transparent px-4 pb-1 text-xs sm:text-sm font-medium data-[state=active]:border-blue-500 data-[state=active]:text-blue-500 hover:cursor-pointer"
-              >
-                {tab}
-              </TabsTrigger>
-            ))}
+            {["All", "Pending", "Approved", "Inspected", "Rejected"].map(
+              (tab) => (
+                <TabsTrigger
+                  key={tab}
+                  value={tab}
+                  className="rounded-none border-b-2 border-transparent px-4 pb-1 text-xs sm:text-sm font-medium data-[state=active]:border-blue-500 data-[state=active]:text-blue-500 hover:cursor-pointer"
+                >
+                  {tab}
+                </TabsTrigger>
+              ),
+            )}
           </TabsList>
           <div className="flex gap-2 sm:gap-3 items-end sm:w-auto">
             <div className="flex items-center gap-2">
@@ -279,7 +282,7 @@ const AdminDashboard = () => {
           <DataTable
             isLoading={isLoading}
             columns={columns}
-            data={filteredAppointments || []}
+            data={appointments}
           />
         </div>
       </Tabs>
@@ -384,11 +387,21 @@ const AdminDashboard = () => {
             {/* Actions */}
             <div className="flex gap-2 sm:gap-3 mt-6">
               <button
-                onClick={() => handleApproval(selectedItem._id)}
-                className="flex-1 bg-black text-white py-2 rounded-lg text-sm hover:bg-gray-900 disabled:opacity-70"
+                onClick={() =>
+                  selectedItem.status.toLowerCase() === "approved"
+                    ? handleInspection(selectedItem._id)
+                    : handleApproval(selectedItem._id)
+                }
+                className="flex-1 bg-black text-white py-2 rounded-lg text-sm hover:bg-gray-900 disabled:opacity-70 flex items-center justify-center disabled:hover:bg-black"
                 disabled={isUpdating}
               >
-                {isUpdating ? "Approving..." : "Approve"}
+                {isUpdating ? (
+                  <Throbber className="w-4 h-4 text-white" />
+                ) : selectedItem.status.toLowerCase() === "approved" ? (
+                  "Inspected"
+                ) : (
+                  "Approve"
+                )}
               </button>
               <button
                 onClick={() => {

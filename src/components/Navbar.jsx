@@ -80,18 +80,22 @@ const Navbar = () => {
               navigate("/");
             }
           }}
-          className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity"
+          className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:opacity-90 transition-opacity"
         >
-          <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center shrink-0">
             <img
               src="/logo.png"
               alt="Big Dad Communications Logo"
               className="w-full h-full object-contain"
             />
           </div>
-          <span className="text-white font-bold text-xl md:text-2xl tracking-tight">
-            Bigdad <span className="text-[#0093FF]">Communications WORLD</span>
-          </span>
+          <div className="text-white font-bold text-base sm:text-xl md:text-2xl tracking-tight leading-tight">
+            <span>Bigdad</span>
+            <span className="text-[#0093FF] hidden sm:inline">
+              {" "}
+              Communications
+            </span>
+          </div>
         </div>
 
         <ul className="hidden lg:flex items-center gap-10 text-white font-semibold text-sm uppercase tracking-widest">

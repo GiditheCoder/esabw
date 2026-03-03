@@ -40,19 +40,21 @@ const Footer = () => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 else navigate("/");
               }}
-              className="text-2xl font-bold mb-6 flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity"
+              className="mb-6 cursor-pointer hover:opacity-90 transition-opacity"
             >
-              <div className="w-12 h-12 flex items-center justify-center">
-                <img
-                  src="/logo.png"
-                  alt="Big Dad Communications Logo"
-                  className="w-full h-full object-contain"
-                />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center shrink-0">
+                  <img
+                    src="/logo.png"
+                    alt="Big Dad Communications Logo"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="font-bold text-lg sm:text-2xl leading-tight">
+                  <span className="block sm:inline">Bigdad</span>
+                  <span className="text-[#0093FF]"> Communications</span>
+                </div>
               </div>
-              <span className="leading-tight">
-                Bigdad <span className="text-[#0093FF]">Communications</span>{" "}
-                WORLD
-              </span>
             </div>
             <p className="text-gray-400 leading-relaxed text-sm max-w-sm">
               Professional engineering services for appliance repairs,
@@ -173,8 +175,8 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Bigdad Communications WORLD. All rights
+          <p className="text-gray-500 text-sm text-center sm:text-left">
+            © {new Date().getFullYear()} Bigdad Communications. All rights
             reserved.
           </p>
           <div className="flex items-center gap-4">

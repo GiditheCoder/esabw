@@ -59,8 +59,8 @@ const Contact = () => {
         className="relative h-[60vh] flex items-center justify-center text-white overflow-hidden rounded-b-[4rem]"
         style={{
           backgroundImage: `linear-gradient(rgba(4, 23, 37, 0.8), rgba(4, 23, 37, 0.4)), url(${box10})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         {/* Decorative elements */}
@@ -74,20 +74,22 @@ const Contact = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight text-white">
-              Get in <span className="bg-gradient-to-r from-[#0093FF] to-blue-400 bg-clip-text text-transparent">Touch</span>
+              Get in{" "}
+              <span className="bg-gradient-to-r from-[#0093FF] to-blue-400 bg-clip-text text-transparent">
+                Touch
+              </span>
             </h1>
             <p className="text-base md:text-lg opacity-90 font-medium max-w-2xl mx-auto leading-relaxed text-white">
-              Have a technical project or need urgent repairs? Our engineering team
-              is ready to provide expert support and bespoke solutions.
+              Have a technical project or need urgent repairs? Our engineering
+              team is ready to provide expert support and bespoke solutions.
             </p>
           </motion.div>
         </div>
       </div>
 
       {/* ================= MAIN CONTENT ================= */}
-      <div className="max-w-7xl mx-auto px-6 mt-12 pb-32 relative z-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-12 pb-32 relative z-20 overflow-hidden">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Contact Information & Map */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -95,49 +97,62 @@ const Contact = () => {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <div className="bg-[#041725] rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden">
+            <div className="bg-[#041725] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full"></div>
 
-              <h2 className="text-3xl font-bold mb-10 relative z-10">Contact Information</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-10 relative z-10">
+                Contact Information
+              </h2>
 
-              <div className="space-y-8 relative z-10">
-                <div className="flex items-start gap-6 group">
-                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0093FF]/20 group-hover:border-[#0093FF]/40 transition-all">
-                    <Phone className="text-[#0093FF]" size={24} />
+              <div className="space-y-6 sm:space-y-8 relative z-10">
+                <div className="flex items-start gap-4 sm:gap-6 group">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0093FF]/20 group-hover:border-[#0093FF]/40 transition-all">
+                    <Phone className="text-[#0093FF]" size={20} />
                   </div>
-                  <div>
-                    <p className="text-gray-400 text-sm font-medium mb-1 uppercase tracking-wider">Call Us</p>
-                    <p className="text-xl font-bold hover:text-[#0093FF] transition-colors">
+                  <div className="min-w-0">
+                    <p className="text-gray-400 text-xs sm:text-sm font-medium mb-1 uppercase tracking-wider">
+                      Call Us
+                    </p>
+                    <p className="text-lg sm:text-xl font-bold hover:text-[#0093FF] transition-colors">
                       <a href="tel:08039424024">0803 942 4024</a>
                     </p>
-                    <div className="flex items-center gap-2 mt-2 text-gray-400 text-sm italic">
+                    <div className="flex items-center gap-2 mt-2 text-gray-400 text-xs sm:text-sm italic">
                       <Clock size={14} />
                       <span>Mon – Sat, 8am – 6pm</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-6 group">
-                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0093FF]/20 group-hover:border-[#0093FF]/40 transition-all">
-                    <Mail className="text-[#0093FF]" size={24} />
+                <div className="flex items-start gap-4 sm:gap-6 group">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0093FF]/20 group-hover:border-[#0093FF]/40 transition-all">
+                    <Mail className="text-[#0093FF]" size={20} />
                   </div>
-                  <div>
-                    <p className="text-gray-400 text-sm font-medium mb-1 uppercase tracking-wider">Email Us</p>
-                    <p className="text-xl font-bold hover:text-[#0093FF] transition-colors leading-tight">
-                      <a href="mailto:bigdad_2k2@yahoo.com">bigdad_2k2@yahoo.com</a>
+                  <div className="min-w-0">
+                    <p className="text-gray-400 text-xs sm:text-sm font-medium mb-1 uppercase tracking-wider">
+                      Email Us
                     </p>
-                    <p className="mt-2 text-gray-400 text-sm italic">Response within 24 hours</p>
+                    <p className="text-base sm:text-xl font-bold hover:text-[#0093FF] transition-colors leading-tight break-all">
+                      <a href="mailto:bigdad_2k2@yahoo.com">
+                        bigdad_2k2@yahoo.com
+                      </a>
+                    </p>
+                    <p className="mt-2 text-gray-400 text-xs sm:text-sm italic">
+                      Response within 24 hours
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-6 group">
-                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0093FF]/20 group-hover:border-[#0093FF]/40 transition-all">
-                    <MapPin className="text-[#0093FF]" size={24} />
+                <div className="flex items-start gap-4 sm:gap-6 group">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-[#0093FF]/20 group-hover:border-[#0093FF]/40 transition-all">
+                    <MapPin className="text-[#0093FF]" size={20} />
                   </div>
-                  <div>
-                    <p className="text-gray-400 text-sm font-medium mb-1 uppercase tracking-wider">Visit Us</p>
-                    <p className="text-lg font-bold leading-snug">
-                      Shop 5, Block D Abattoir Shopping Complex,<br />Abattoir Bus Stop, Agege, Lagos, Nigeria
+                  <div className="min-w-0">
+                    <p className="text-gray-400 text-xs sm:text-sm font-medium mb-1 uppercase tracking-wider">
+                      Visit Us
+                    </p>
+                    <p className="text-base sm:text-lg font-bold leading-snug">
+                      Shop 5, Block D Abattoir Shopping Complex, Abattoir Bus
+                      Stop, Agege, Lagos, Nigeria
                     </p>
                   </div>
                 </div>
@@ -150,10 +165,12 @@ const Contact = () => {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-white rounded-[2.5rem] shadow-2xl p-10 md:p-12 border border-gray-100"
+            className="bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl p-6 sm:p-10 md:p-12 border border-gray-100"
           >
             <div className="mb-10">
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Send a Message</h2>
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+                Send a Message
+              </h2>
               <p className="text-gray-500 font-medium">
                 Fill out the form and our engineers will review your request.
               </p>
@@ -162,7 +179,9 @@ const Contact = () => {
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 ml-1">Full Name *</label>
+                  <label className="text-sm font-bold text-gray-700 ml-1">
+                    Full Name *
+                  </label>
                   <input
                     type="text"
                     required
@@ -174,7 +193,9 @@ const Contact = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 ml-1">Email Address *</label>
+                  <label className="text-sm font-bold text-gray-700 ml-1">
+                    Email Address *
+                  </label>
                   <input
                     type="email"
                     required
@@ -188,7 +209,9 @@ const Contact = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 ml-1">Phone Number *</label>
+                <label className="text-sm font-bold text-gray-700 ml-1">
+                  Phone Number *
+                </label>
                 <input
                   type="tel"
                   required
@@ -201,7 +224,9 @@ const Contact = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 ml-1">Your Message *</label>
+                <label className="text-sm font-bold text-gray-700 ml-1">
+                  Your Message *
+                </label>
                 <textarea
                   rows="5"
                   required
@@ -226,7 +251,8 @@ const Contact = () => {
 
               {isError && (
                 <p className="text-center text-sm font-bold text-red-500 mt-4">
-                  {error?.message || "Failed to send message. Please try again."}
+                  {error?.message ||
+                    "Failed to send message. Please try again."}
                 </p>
               )}
             </form>
@@ -272,9 +298,12 @@ const Contact = () => {
                 />
               </motion.div>
 
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Message Sent!</h2>
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+                Message Sent!
+              </h2>
               <p className="text-gray-500 font-medium mb-10 leading-relaxed text-lg">
-                Thank you for reaching out. One of our engineers will review your inquiry and contact you within 24 hours.
+                Thank you for reaching out. One of our engineers will review
+                your inquiry and contact you within 24 hours.
               </p>
 
               <button

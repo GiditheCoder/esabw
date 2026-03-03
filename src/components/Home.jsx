@@ -16,8 +16,8 @@ const Home = () => {
         className="relative flex min-h-screen items-center justify-center pt-20 overflow-hidden"
         style={{
           backgroundImage: `linear-gradient(rgba(4, 23, 37, 0.7), rgba(4, 23, 37, 0.9)), url(${box8})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         <div className="absolute top-1/2 -left-20 w-80 h-80 bg-[#0093FF]/20 blur-[120px] rounded-full"></div>
@@ -50,15 +50,14 @@ const Home = () => {
                 className="group inline-flex items-center gap-3 rounded-xl bg-[#0093FF] px-8 py-3 text-sm font-bold text-white hover:bg-[#007cd6] hover:shadow-[0_0_20px_rgba(0,147,255,0.4)] transition-all active:scale-95"
               >
                 Book Appointment
-                <img src={book} alt="Book appointment" className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  const el = document.getElementById('services');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  const el = document.getElementById("services");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
                 className="inline-flex items-center gap-3 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 px-8 py-3 text-sm font-bold text-white hover:bg-white/10 transition-all active:scale-95"
               >

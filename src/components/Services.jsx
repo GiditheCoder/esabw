@@ -11,9 +11,9 @@ const Services = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2
-      }
-    }
+        staggerChildren: 0.2,
+      },
+    },
   };
 
   const itemVariants = {
@@ -21,14 +21,13 @@ const Services = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
   };
 
   return (
     <section id="services" className="w-full bg-white py-24">
-      <div className="max-w-7xl mx-auto px-6 relative">
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative">
         {/* Background Header */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -62,11 +61,11 @@ const Services = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
               className="text-gray-200 text-lg leading-relaxed mb-12 font-medium"
             >
-              We go beyond simple fixes. Our team of certified engineers provides
-              end-to-end technical support for residential and commercial
-              equipment. Whether you are facing a critical breakdown or setting
-              up a new facility, we ensure your technology operates at peak
-              performance.
+              We go beyond simple fixes. Our team of certified engineers
+              provides end-to-end technical support for residential and
+              commercial equipment. Whether you are facing a critical breakdown
+              or setting up a new facility, we ensure your technology operates
+              at peak performance.
             </motion.p>
           </div>
         </motion.div>
@@ -77,25 +76,24 @@ const Services = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="relative z-20 -mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 px-4 sm:px-10"
+          className="relative z-20 -mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 px-2 sm:px-10"
         >
-
           {[
             {
               img: box5,
               title: "Diagnostics & Repair",
-              desc: "We troubleshoot and fix complex issues for a wide range of appliances, including TVs, air conditioners, and washing machines."
+              desc: "We troubleshoot and fix complex issues for a wide range of appliances, including TVs, air conditioners, and washing machines.",
             },
             {
               img: box6,
               title: "Professional Installation",
-              desc: "Secure and compliant installation for heavy-duty appliances. We ensure your equipment is mounted and fitted correctly."
+              desc: "Secure and compliant installation for heavy-duty appliances. We ensure your equipment is mounted and fitted correctly.",
             },
             {
               img: box7,
               title: "System Setup & Configuration",
-              desc: "Don’t struggle with the manual. Our engineers handle the technical configuration to ensure your devices operate at peak performance."
-            }
+              desc: "Don’t struggle with the manual. Our engineers handle the technical configuration to ensure your devices operate at peak performance.",
+            },
           ].map((service, idx) => (
             <motion.div
               key={idx}
@@ -119,7 +117,6 @@ const Services = () => {
               </p>
             </motion.div>
           ))}
-
         </motion.div>
       </div>
     </section>

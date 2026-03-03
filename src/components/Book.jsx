@@ -27,6 +27,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import boxappoint from "../images/boxappoint.png";
 import Navbar from "./Navbar";
 
 const Book = () => {
@@ -35,6 +37,7 @@ const Book = () => {
   const [successModal, setSuccessModal] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [showCustomAppliance, setShowCustomAppliance] = useState(false);
+  const [applianceSelectValue, setApplianceSelectValue] = useState("");
 
   const formSchema = z.object({
     serviceType: z.string().min(1, "Service type is required"),
@@ -42,7 +45,6 @@ const Book = () => {
       .string()
       .min(10, "Please provide at least 10 characters"),
     applianceType: z.string().optional().or(z.literal("")),
-    customApplianceType: z.string().optional().or(z.literal("")),
     appointmentDate: z.string().min(1, "Appointment date is required"),
     fullName: z.string().min(1, "Full name is required"),
     email: z.string().email("Enter a valid email address"),
@@ -54,7 +56,6 @@ const Book = () => {
     serviceType: "",
     serviceDescription: "",
     applianceType: "",
-    customApplianceType: "",
     appointmentDate: "",
     fullName: "",
     email: "",
@@ -126,34 +127,36 @@ const Book = () => {
   const handleProceed = form.handleSubmit(() => setOpenModal(true));
 
   return (
-    <div className="w-full">
+    <div className="bg-[#041725] min-h-screen">
+      <Navbar />
+
+      {/* Hero Section */}
       <div
-        className="
-          min-h-[70vh]
-          rounded-b-[50px]
-          bg-cover bg-center
-          text-white
-          px-8 py-6
-        "
+        className="relative h-[60vh] flex items-center justify-center text-white overflow-hidden rounded-b-[4rem]"
         style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url(${boxappointment})`,
+          backgroundImage: `linear-gradient(rgba(4, 23, 37, 0.8), rgba(4, 23, 37, 0.4)), url(${boxappoint})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
         }}
       >
-        {/* Navbar */}
-        <Navbar />
+        {/* Decorative elements */}
+        <div className="absolute top-1/2 -left-20 w-80 h-80 bg-[#0093FF]/10 blur-[120px] rounded-full"></div>
+        <div className="absolute bottom-0 -right-20 w-80 h-80 bg-blue-600/10 blur-[120px] rounded-full"></div>
 
-        {/* Hero Content */}
-        <div className="flex min-h-[55vh] items-center justify-center text-center">
-          <div className="max-w-3xl">
-            <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl leading-tight">
-              Book an Appointment
+        <div className="relative z-10 text-center px-4 max-w-4xl pt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-white">
+              Book your <span className="bg-gradient-to-r from-[#0093FF] to-blue-400 bg-clip-text text-transparent">Slot</span>
             </h1>
-
-            <p className="mt-3 text-xs sm:text-sm opacity-90">
-              Tell us about your service needs and we'll get back to you
-              promptly
+            <p className="text-base md:text-lg opacity-90 font-medium max-w-2xl mx-auto leading-relaxed text-white">
+              Schedule your professional engineering service today. Reliable,
+              expert-led support for all your technical maintenance and installations.
             </p>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -202,12 +205,14 @@ const Book = () => {
                               <SelectValue placeholder="Select a service type" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Repair">Repair</SelectItem>
-                            <SelectItem value="Installation">
-                              Installation
-                            </SelectItem>
-                            <SelectItem value="Setup">Setup</SelectItem>
+                          <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                            <SelectItem value="Electrical Services">Electrical Services</SelectItem>
+                            <SelectItem value="CCTV">CCTV</SelectItem>
+                            <SelectItem value="Appliance Services">Appliance Services</SelectItem>
+                            <SelectItem value="Furniture Assembly">Furniture Assembly</SelectItem>
+                            <SelectItem value="Device Repairs">Device Repairs</SelectItem>
+                            <SelectItem value="PAT Testing">PAT Testing</SelectItem>
+                            <SelectItem value="DIY Consulting">DIY Consulting</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage className="text-red-500" />
@@ -245,20 +250,22 @@ const Book = () => {
                         <FormLabel>Appliance Type</FormLabel>
                         <Select
                           onValueChange={(value) => {
-                            field.onChange(value);
+                            setApplianceSelectValue(value);
                             setShowCustomAppliance(value === "Others");
-                            if (value !== "Others") {
-                              form.setValue("customApplianceType", "");
+                            if (value === "Others") {
+                              field.onChange("");
+                            } else {
+                              field.onChange(value);
                             }
                           }}
-                          value={field.value}
+                          value={applianceSelectValue}
                         >
                           <FormControl>
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select the appliance you want to fix" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
+                          <SelectContent className="bg-white border border-gray-200 shadow-lg">
                             <SelectItem value="Television">
                               Television
                             </SelectItem>
@@ -278,7 +285,7 @@ const Book = () => {
                   {showCustomAppliance && (
                     <FormField
                       control={form.control}
-                      name="customApplianceType"
+                      name="applianceType"
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <FormLabel>
@@ -623,70 +630,3 @@ const Book = () => {
 };
 
 export default Book;
-
-// import React, { useState } from "react";
-// import boxappointment from "../images/boxappoint.png";
-// import { useNavigate } from "react-router-dom";
-// import sparkle from "../images/sparkle.png";
-// import BackwardIcon from "../images/Backwardicon.png";
-// import CloseIcon from "../images/CloseIcon.png";
-// import { motion, AnimatePresence } from "framer-motion";
-
-// const Book = () => {
-//   const navigate = useNavigate();
-//   const [openModal, setOpenModal] = useState(false);
-//   const [successModal, setSuccessModal] = useState(false);
-
-//   return (
-//     <div className="w-full">
-//       {/* ================= HERO ================= */}
-//       <div
-//         className="min-h-[70vh] rounded-b-[50px] bg-cover bg-center text-white px-8 py-6"
-//         style={{
-//           backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url(${boxappointment})`,
-//         }}
-//       >
-//         <nav className="flex items-center justify-between border border-white rounded-xl bg-white/10 backdrop-blur-md px-9 py-5">
-//           <div className="text-sm font-semibold">Brand Logo</div>
-
-//           <ul className="flex gap-6 text-sm text-white">
-//             <li onClick={() => navigate("/")} className="cursor-pointer hover:text-[#0093FF]">
-//               Home
-//             </li>
-//             <li className="cursor-pointer hover:text-[#0093FF]">Services</li>
-//             <li className="cursor-pointer hover:text-[#0093FF]">About us</li>
-//             <li className="cursor-pointer hover:text-[#0093FF]">Contact</li>
-//           </ul>
-//         </nav>
-
-//         <div className="flex min-h-[55vh] items-center justify-center text-center">
-//           <div>
-//             <h1 className="text-5xl font-bold">Book an Appointment</h1>
-//             <p className="mt-4 text-sm opacity-90">
-//               Tell us about your service needs and we'll get back to you promptly
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* ================= FORM ================= */}
-//       <div className="bg-gray-50 py-20 px-6">
-//         <div className="max-w-4xl mx-auto rounded-2xl bg-white p-8 shadow-xl">
-//           <h2 className="text-2xl font-bold mb-2">Appointment Request Form</h2>
-
-//           <button
-//             onClick={() => setOpenModal(true)}
-//             className="mt-8 w-full rounded-lg bg-slate-900 py-3 text-white font-semibold"
-//           >
-//             Proceed
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* ================= CONFIRM MODAL ================= */}
-
-//     </div>
-//   );
-// };
-
-// export default Book;

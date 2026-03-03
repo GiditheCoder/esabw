@@ -10,14 +10,14 @@ const apiClient = axios.create({
   },
 });
 
-const authorizeedApiClient = axios.create({
+const authorizedApiClient = axios.create({
   baseURL: apiBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-authorizeedApiClient.interceptors.request.use((config) => {
+authorizedApiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -63,7 +63,6 @@ export const useAdminLogin = () =>
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("Login successful:", data);
       if (data.data.token) {
         localStorage.setItem("token", data.data.token);
       }
@@ -75,7 +74,7 @@ export const useUpdateAppointmentStatus = () => {
 
   return useMutation({
     mutationFn: async ({ id, status, rejectionReason = "" }) => {
-      const response = await authorizeedApiClient.patch(
+      const response = await authorizedApiClient.patch(
         `/api/v1/appointments/${id}`,
         {
           status,
@@ -95,13 +94,51 @@ export const useDeleteAppointment = () => {
 
   return useMutation({
     mutationFn: async (id) => {
-      const response = await authorizeedApiClient.delete(
+      const response = await authorizedApiClient.delete(
         `/api/v1/appointments/${id}`,
       );
       return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    },
+  });
+};
+
+export const useCreateGallery = (options = {}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload) => {
+      const response = await authorizedApiClient.post(
+        "/api/v1/galleries",
+        payload,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
+      return response.data;
+    },
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ["galleries"] });
+      options.onSuccess?.(data, variables, context);
+    },
+    ...options,
+  });
+};
+
+export const useDeleteGallery = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id) => {
+      const response = await authorizedApiClient.delete(
+        `/api/v1/galleries/${id}`,
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["galleries"] });
     },
   });
 };

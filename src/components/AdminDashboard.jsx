@@ -214,7 +214,7 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="p-3 sm:p-6 bg-white min-h-screen">
+    <div className="p-3 sm:p-6 bg-white min-h-screen overflow-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b pb-4 gap-4">
         <div>
@@ -245,8 +245,8 @@ const AdminDashboard = () => {
       {/* Tabs + Actions */}
 
       <Tabs className={"mt-4"} value={activeTab} onValueChange={setActiveTab}>
-        <div className="flex items-center justify-between">
-          <TabsList className="sm:w-auto gap-2 bg-transparent p-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <TabsList className="sm:w-auto gap-2 bg-transparent p-0 flex-wrap">
             {["All", "Pending", "Approved", "Inspected", "Rejected"].map(
               (tab) => (
                 <TabsTrigger
@@ -278,7 +278,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Table */}
-        <div className="mt-6 overflow-x-auto">
+        <div className="mt-6 overflow-x-auto max-w-full">
           <DataTable
             isLoading={isLoading}
             columns={columns}

@@ -28,3 +28,12 @@ export const useGetAllAppointments = (params = {}) =>
       return response.data.data;
     },
   });
+
+export const useGetAllGalleries = () =>
+  useQuery({
+    queryKey: ["galleries"],
+    queryFn: async () => {
+      const response = await apiClient.get("/api/v1/galleries");
+      return response.data.data;
+    },
+  });

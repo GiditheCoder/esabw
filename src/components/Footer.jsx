@@ -131,10 +131,10 @@ const Footer = () => {
                   <Phone size={18} className="text-[#0093FF]" />
                 </div>
                 <a
-                  href="tel:08039424024"
+                  href="tel:07771096969"
                   className="hover:text-[#0093FF] transition-colors"
                 >
-                  0803 942 4024
+                  07771096969
                 </a>
               </li>
               <li className="flex items-center gap-4">
@@ -142,20 +142,17 @@ const Footer = () => {
                   <Mail size={18} className="text-[#0093FF]" />
                 </div>
                 <a
-                  href="mailto:bigdad_2k2@yahoo.com"
+                  href="mailto:info@bigdadcommunications.com"
                   className="hover:text-[#0093FF] transition-colors"
                 >
-                  bigdad_2k2@yahoo.com
+                  info@bigdadcommunications.com
                 </a>
               </li>
               <li className="flex items-start gap-4">
                 <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#0093FF]/10 shrink-0">
                   <MapPin size={18} className="text-[#0093FF]" />
                 </div>
-                <span className="pt-2">
-                  Shop 5, Block D Abattoir Shopping Complex, Abattoir Bus Stop,
-                  Agege, Lagos, Nigeria
-                </span>
+                <span className="pt-2">47 Ocean Street, PL2 2DJ, Plymouth</span>
               </li>
               <li className="flex items-center gap-4">
                 <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#0093FF]/10">

@@ -114,7 +114,7 @@ const Contact = () => {
                       Call Us
                     </p>
                     <p className="text-lg sm:text-xl font-bold hover:text-[#0093FF] transition-colors">
-                      <a href="tel:08039424024">0803 942 4024</a>
+                      <a href="tel:07771096969">07771096969</a>
                     </p>
                     <div className="flex items-center gap-2 mt-2 text-gray-400 text-xs sm:text-sm italic">
                       <Clock size={14} />
@@ -132,8 +132,8 @@ const Contact = () => {
                       Email Us
                     </p>
                     <p className="text-base sm:text-xl font-bold hover:text-[#0093FF] transition-colors leading-tight break-all">
-                      <a href="mailto:bigdad_2k2@yahoo.com">
-                        bigdad_2k2@yahoo.com
+                      <a href="mailto:info@bigdadcommunications.com">
+                        info@bigdadcommunications.com
                       </a>
                     </p>
                     <p className="mt-2 text-gray-400 text-xs sm:text-sm italic">
@@ -151,8 +151,7 @@ const Contact = () => {
                       Visit Us
                     </p>
                     <p className="text-base sm:text-lg font-bold leading-snug">
-                      Shop 5, Block D Abattoir Shopping Complex, Abattoir Bus
-                      Stop, Agege, Lagos, Nigeria
+                      47 Ocean Street, PL2 2DJ, Plymouth
                     </p>
                   </div>
                 </div>

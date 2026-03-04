@@ -29,21 +29,6 @@ const GalleryPage = () => {
     },
   };
 
-  // Generate bento grid classes based on index for variety (only on larger screens)
-  const getBentoClass = (index) => {
-    const patterns = [
-      "sm:col-span-1 sm:row-span-1",
-      "sm:col-span-1 sm:row-span-1",
-      "sm:col-span-1 sm:row-span-2",
-      "sm:col-span-1 sm:row-span-1",
-      "sm:col-span-2 sm:row-span-1",
-      "sm:col-span-1 sm:row-span-1",
-      "sm:col-span-1 sm:row-span-2",
-      "sm:col-span-1 sm:row-span-1",
-    ];
-    return patterns[index % patterns.length];
-  };
-
   return (
     <div className="min-h-screen bg-[#041725] overflow-x-hidden">
       <Navbar />
@@ -75,11 +60,11 @@ const GalleryPage = () => {
       <section className="px-6 pb-24 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:auto-rows-[200px] gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {[...Array(8)].map((_, idx) => (
                 <div
                   key={idx}
-                  className={`bg-white/5 rounded-2xl animate-pulse aspect-square sm:aspect-auto ${getBentoClass(idx)}`}
+                  className="bg-white/5 rounded-2xl animate-pulse aspect-square"
                 />
               ))}
             </div>
@@ -94,7 +79,7 @@ const GalleryPage = () => {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:auto-rows-[200px] gap-4"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
             >
               {galleries.map((item, idx) => (
                 <motion.div
@@ -102,7 +87,7 @@ const GalleryPage = () => {
                   variants={itemVariants}
                   whileHover={{ scale: 1.02, transition: { duration: 0.3 } }}
                   onClick={() => setSelectedImage(item)}
-                  className={`group relative rounded-2xl overflow-hidden cursor-pointer aspect-square sm:aspect-auto ${getBentoClass(idx)}`}
+                  className="group relative rounded-2xl overflow-hidden cursor-pointer aspect-square"
                 >
                   <img
                     src={item.image}
